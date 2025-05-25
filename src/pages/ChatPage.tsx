@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import type { Assistant } from './HomePage';
 
 interface Message {
@@ -10,6 +10,7 @@ interface Message {
 
 export default function ChatPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [assistant, setAssistant] = useState<Assistant | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -74,6 +75,12 @@ export default function ChatPage() {
 
   return (
     <div className="p-4 space-y-4 max-w-2xl mx-auto">
+      <button
+        className="bg-gray-200 text-gray-700 px-3 py-1 rounded"
+        onClick={() => navigate(-1)}
+      >
+        Back
+      </button>
       <h1 className="text-xl font-bold">
         Chat with {assistant ? assistant.name : id}
       </h1>
