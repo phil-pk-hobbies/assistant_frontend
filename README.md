@@ -57,3 +57,5 @@ export default tseslint.config({
 
 Run `npm run dev` and open the app in your browser. The home page lists all existing assistants retrieved from `/api/assistants/`. Use the form on the page to enter a name and submit to create a new assistant.
 
+To chat with an assistant the frontend now posts messages to `/api/assistants/<uuid>/chat/`. The backend returns the assistant's reply which is displayed in the chat window.
+
