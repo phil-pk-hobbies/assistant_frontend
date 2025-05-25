@@ -59,3 +59,5 @@ Run `npm run dev` and open the app in your browser. The home page lists all exis
 
 To chat with an assistant the frontend now posts messages to `/api/assistants/<uuid>/chat/`. The backend returns the assistant's reply which is displayed in the chat window.
 
+When creating a new assistant you can select a model from a dropdown menu. The list of options is loaded directly from the OpenAI API at `https://api.openai.com/v1/models` using the `VITE_OPENAI_API_KEY` environment variable. The chosen model is sent along with the create request.
+
