@@ -46,7 +46,7 @@ export default function ChatPage() {
 
   const sendMessage = async () => {
     try {
-      const res = await fetch(`/api/assistants/${id}/messages/`, {
+      const res = await fetch(`/api/assistants/${id}/chat/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: input }),
