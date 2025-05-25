@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function CreateAssistantPage() {
@@ -6,8 +6,31 @@ export default function CreateAssistantPage() {
   const [description, setDescription] = useState('');
   const [instructions, setInstructions] = useState('');
   const [tools, setTools] = useState('');
+  const [model, setModel] = useState('');
+  const [models, setModels] = useState<string[]>([]);
   const [status, setStatus] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const fetchModels = async () => {
+    try {
+      const res = await fetch('https://api.openai.com/v1/models', {
+        headers: {
+          Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+        },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const list = Array.isArray(data.data) ? data.data : data;
+        setModels(list.map((m: any) => m.id ?? m));
+      }
+    } catch {
+      // ignore errors
+    }
+  };
+
+  useEffect(() => {
+    void fetchModels();
+  }, []);
 
   const createAssistant = async () => {
     try {
@@ -15,6 +38,7 @@ export default function CreateAssistantPage() {
         name,
         description,
         instructions,
+        model,
         tools: tools
           .split(',')
           .map((t) => t.trim())
@@ -65,6 +89,18 @@ export default function CreateAssistantPage() {
           onChange={(e) => setInstructions(e.target.value)}
           placeholder="Instructions"
         />
+        <select
+          className="border p-2 w-full"
+          value={model}
+          onChange={(e) => setModel(e.target.value)}
+        >
+          <option value="">Select Model</option>
+          {models.map((m) => (
+            <option key={m} value={m}>
+              {m}
+            </option>
+          ))}
+        </select>
         <input
           className="border p-2 w-full"
           type="text"
