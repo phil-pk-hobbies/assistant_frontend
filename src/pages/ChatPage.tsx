@@ -15,6 +15,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [status, setStatus] = useState<string | null>(null);
+  const [waiting, setWaiting] = useState(false);
 
   const fetchAssistant = async () => {
     try {
@@ -46,6 +47,9 @@ export default function ChatPage() {
   }, [id]);
 
   const sendMessage = async () => {
+    if (waiting || input.trim().length === 0) {
+      return;
+    }
     try {
       const content = input;
       setInput('');
@@ -54,6 +58,7 @@ export default function ChatPage() {
         ...msgs,
         { id: `tmp-${Date.now()}`, role: 'user', content },
       ]);
+      setWaiting(true);
 
       const res = await fetch(`/api/assistants/${id}/chat/`, {
         method: 'POST',
@@ -70,6 +75,8 @@ export default function ChatPage() {
       setMessages((msgs) => [...msgs, reply]);
     } catch (err: any) {
       setStatus(`Error: ${err.message}`);
+    } finally {
+      setWaiting(false);
     }
   };
 
@@ -91,6 +98,16 @@ export default function ChatPage() {
             {msg.content}
           </div>
         ))}
+        {waiting && (
+          <div>
+            <span className="font-semibold">assistant: </span>
+            <span className="loading-dots text-gray-500">
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+          </div>
+        )}
       </div>
       <div className="flex space-x-2">
         <input
@@ -99,7 +116,7 @@ export default function ChatPage() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' && input.trim().length > 0) {
+            if (e.key === 'Enter' && input.trim().length > 0 && !waiting) {
               e.preventDefault();
               void sendMessage();
             }
@@ -107,7 +124,8 @@ export default function ChatPage() {
           placeholder="Type a message"
         />
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={waiting}
           onClick={sendMessage}
         >
           Send
