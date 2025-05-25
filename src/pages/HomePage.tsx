@@ -5,6 +5,7 @@ export interface Assistant {
   id: string;
   name: string;
   description: string;
+  model: string;
 }
 
 export default function HomePage() {
@@ -63,6 +64,7 @@ export default function HomePage() {
               <p className="text-sm text-gray-700 whitespace-pre-line">
                 {assistant.description}
               </p>
+              <p className="text-sm text-gray-500">Model: {assistant.model}</p>
             </div>
             <button
               className="ml-4 bg-red-500 text-white px-2 py-1 rounded"
