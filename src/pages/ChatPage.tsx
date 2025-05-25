@@ -46,17 +46,27 @@ export default function ChatPage() {
 
   const sendMessage = async () => {
     try {
+      const content = input;
+      setInput('');
+      // Optimistically show the user's message
+      setMessages((msgs) => [
+        ...msgs,
+        { id: `tmp-${Date.now()}`, role: 'user', content },
+      ]);
+
       const res = await fetch(`/api/assistants/${id}/chat/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: input }),
+        body: JSON.stringify({ content }),
       });
+
       if (!res.ok) {
         const data = await res.text();
         throw new Error(data || res.statusText);
       }
-      setInput('');
-      void fetchMessages();
+
+      const reply = await res.json();
+      setMessages((msgs) => [...msgs, reply]);
     } catch (err: any) {
       setStatus(`Error: ${err.message}`);
     }
