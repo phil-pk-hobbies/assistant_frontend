@@ -91,6 +91,12 @@ export default function ChatPage() {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && input.trim().length > 0) {
+              e.preventDefault();
+              void sendMessage();
+            }
+          }}
           placeholder="Type a message"
         />
         <button
