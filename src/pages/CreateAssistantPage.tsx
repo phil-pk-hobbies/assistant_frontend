@@ -13,9 +13,11 @@ export default function CreateAssistantPage() {
 
   const fetchModels = async () => {
     try {
+
       const key = import.meta.env.VITE_OPENAI_API_KEY;
       const res = await fetch('https://api.openai.com/v1/models', {
         headers: { Authorization: `Bearer ${key}` },
+main
       });
       if (res.ok) {
         const data = await res.json();
