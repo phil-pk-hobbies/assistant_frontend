@@ -38,6 +38,12 @@ export default function CreateAssistantPage() {
 
   return (
     <div className="p-4 space-y-4 max-w-md mx-auto">
+      <button
+        className="bg-gray-200 text-gray-700 px-3 py-1 rounded"
+        onClick={() => navigate(-1)}
+      >
+        Back
+      </button>
       <h1 className="text-xl font-bold">Create Assistant</h1>
       <div className="space-y-2">
         <input
