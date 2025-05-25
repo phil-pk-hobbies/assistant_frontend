@@ -53,7 +53,7 @@ export default tseslint.config({
 })
 ```
 
-## Creating a new Assistant
+## Managing Assistants
 
-Run `npm run dev` and open the app in your browser. Use the form to enter a name and submit to create a new assistant using the backend API at `/api/assistants/`.
+Run `npm run dev` and open the app in your browser. The home page lists all existing assistants retrieved from `/api/assistants/`. Use the form on the page to enter a name and submit to create a new assistant.
 
