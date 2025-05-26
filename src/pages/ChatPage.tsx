@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import type { Assistant } from './HomePage';
+import Markdown from '../components/Markdown';
 
 interface Message {
   id: string;
@@ -91,11 +92,11 @@ export default function ChatPage() {
       <h1 className="text-xl font-bold">
         Chat with {assistant ? assistant.name : id}
       </h1>
-      <div className="border p-2 h-64 overflow-y-auto space-y-2">
+      <div className="border p-2 h-64 overflow-y-auto space-y-4">
         {messages.map((msg) => (
           <div key={msg.id}>
-            <span className="font-semibold">{msg.role}: </span>
-            {msg.content}
+            <div className="font-semibold mb-1">{msg.role}:</div>
+            <Markdown text={msg.content} />
           </div>
         ))}
         {waiting && (
