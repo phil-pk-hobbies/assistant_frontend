@@ -50,6 +50,25 @@ export default function ChatPage() {
     void fetchMessages();
   }, [id]);
 
+  const clearChat = async () => {
+    if (waiting) {
+      return;
+    }
+    setStatus(null);
+    try {
+      const res = await fetch(`/api/assistants/${id}/reset/`, {
+        method: 'POST',
+      });
+      if (!res.ok) {
+        const data = await res.text();
+        throw new Error(data || res.statusText);
+      }
+      setMessages([]);
+    } catch (err: any) {
+      setStatus(`Error: ${err.message}`);
+    }
+  };
+
   const sendMessage = async () => {
     if (waiting || input.trim().length === 0) {
       return;
@@ -86,12 +105,21 @@ export default function ChatPage() {
 
   return (
     <div className="p-4 space-y-4 flex flex-col h-screen w-full mx-auto">
-      <button
-        className="bg-gray-200 text-gray-700 px-3 py-1 rounded"
-        onClick={() => navigate(-1)}
-      >
-        Back
-      </button>
+      <div className="flex space-x-2">
+        <button
+          className="bg-gray-200 text-gray-700 px-3 py-1 rounded"
+          onClick={() => navigate(-1)}
+        >
+          Back
+        </button>
+        <button
+          className="bg-red-500 text-white px-3 py-1 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={waiting}
+          onClick={clearChat}
+        >
+          Clear Chat
+        </button>
+      </div>
       <h1 className="text-xl font-bold">
         Chat with {assistant ? assistant.name : id}
       </h1>
