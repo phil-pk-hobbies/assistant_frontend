@@ -8,7 +8,7 @@ export default function EditAssistantPage() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [instructions, setInstructions] = useState('');
-  const [tools, setTools] = useState('');
+  const [fileSearch, setFileSearch] = useState(false);
   const [model, setModel] = useState('');
   const [status, setStatus] = useState<string | null>(null);
   const [waiting, setWaiting] = useState(false);
@@ -24,7 +24,7 @@ export default function EditAssistantPage() {
         setInstructions(data.instructions || '');
         setModel(data.model || '');
         if (Array.isArray(data.tools)) {
-          setTools(data.tools.join(', '));
+          setFileSearch(data.tools.includes('file_search'));
         }
       }
     } catch {
@@ -48,10 +48,7 @@ export default function EditAssistantPage() {
         description,
         instructions,
         model,
-        tools: tools
-          .split(',')
-          .map((t) => t.trim())
-          .filter((t) => t.length > 0),
+        tools: fileSearch ? ['file_search'] : [],
       };
       const res = await fetch(`/api/assistants/${id}/`, {
         method: 'PUT',
@@ -111,13 +108,14 @@ export default function EditAssistantPage() {
             </option>
           ))}
         </select>
-        <input
-          className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
-          type="text"
-          value={tools}
-          onChange={(e) => setTools(e.target.value)}
-          placeholder="Tools (comma separated)"
-        />
+        <label className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            checked={fileSearch}
+            onChange={(e) => setFileSearch(e.target.checked)}
+          />
+          <span>Enable file search</span>
+        </label>
         <button
           className="bg-accent text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={waiting}
