@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+const MODEL_OPTIONS = ['gpt-4', 'gpt-4o', 'o1-mini', 'o3-mini'];
+
 export default function EditAssistantPage() {
   const { id } = useParams<{ id: string }>();
   const [name, setName] = useState('');
@@ -8,25 +10,8 @@ export default function EditAssistantPage() {
   const [instructions, setInstructions] = useState('');
   const [tools, setTools] = useState('');
   const [model, setModel] = useState('');
-  const [models, setModels] = useState<string[]>([]);
   const [status, setStatus] = useState<string | null>(null);
   const navigate = useNavigate();
-
-  const fetchModels = async () => {
-    try {
-      const key = import.meta.env.VITE_OPENAI_API_KEY;
-      const res = await fetch('https://api.openai.com/v1/models', {
-        headers: { Authorization: `Bearer ${key}` },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        const list = Array.isArray(data.data) ? data.data : data;
-        setModels(list.map((m: any) => m.id ?? m));
-      }
-    } catch {
-      // ignore errors
-    }
-  };
 
   const fetchAssistant = async () => {
     try {
@@ -48,7 +33,6 @@ export default function EditAssistantPage() {
 
   useEffect(() => {
     void fetchAssistant();
-    void fetchModels();
   }, [id]);
 
   const updateAssistant = async () => {
@@ -114,7 +98,7 @@ export default function EditAssistantPage() {
           onChange={(e) => setModel(e.target.value)}
         >
           <option value="">Select Model</option>
-          {models.map((m) => (
+          {MODEL_OPTIONS.map((m) => (
             <option key={m} value={m}>
               {m}
             </option>
