@@ -32,7 +32,10 @@ export default function ChatPage() {
 
   const fetchMessages = async () => {
     try {
-      const res = await fetch(`/api/assistants/${id}/messages/`);
+      // The backend exposes messages through the read-only `/api/messages/`
+      // endpoint. Filter by assistant id to retrieve the history for the
+      // current assistant.
+      const res = await fetch(`/api/messages/?assistant=${id}`);
       if (res.ok) {
         const data = await res.json();
         setMessages(data);
