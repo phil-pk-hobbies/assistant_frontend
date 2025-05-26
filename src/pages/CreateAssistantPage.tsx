@@ -7,7 +7,7 @@ export default function CreateAssistantPage() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [instructions, setInstructions] = useState('');
-  const [tools, setTools] = useState('');
+  const [fileSearch, setFileSearch] = useState(false);
   const [model, setModel] = useState('');
   const [files, setFiles] = useState<File[]>([]);
   const [status, setStatus] = useState<string | null>(null);
@@ -20,11 +20,9 @@ export default function CreateAssistantPage() {
       if (description.trim() !== '') form.append('description', description);
       if (instructions.trim() !== '') form.append('instructions', instructions);
       if (model) form.append('model', model);
-      tools
-        .split(',')
-        .map((t) => t.trim())
-        .filter((t) => t.length > 0)
-        .forEach((t) => form.append('tools', t));
+      if (fileSearch) {
+        form.append('tools', 'file_search');
+      }
       files.forEach((f) => form.append('files', f));
 
       const res = await fetch('/api/assistants/', {
@@ -83,13 +81,14 @@ export default function CreateAssistantPage() {
             </option>
           ))}
         </select>
-        <input
-          className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
-          type="text"
-          value={tools}
-          onChange={(e) => setTools(e.target.value)}
-          placeholder="Tools (comma separated)"
-        />
+        <label className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            checked={fileSearch}
+            onChange={(e) => setFileSearch(e.target.checked)}
+          />
+          <span>Enable file search</span>
+        </label>
         <input
           className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
           type="file"
