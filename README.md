@@ -64,4 +64,6 @@ When creating a new assistant you can select a model from a dropdown menu. The l
 
 File uploads are also supported during assistant creation. Select one or more files in the form and they will be uploaded using `multipart/form-data` when the request is sent to `/api/assistants/`.
 
+Existing assistants can be edited in the UI. When updating you may upload additional files or select existing ones to remove. The form submits a `PATCH` request to `/api/assistants/<uuid>/` including any new `files` and a `remove_files` list containing the file IDs to delete.
+
 
