@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const MODEL_OPTIONS = ['gpt-4', 'gpt-4o', 'o1-mini', 'o3-mini'];
+const MODEL_OPTIONS = ['gpt-4', 'gpt-4o', 'o3-mini'];
 
 export default function CreateAssistantPage() {
   const [name, setName] = useState('');
