@@ -82,7 +82,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="p-4 space-y-4 max-w-2xl mx-auto">
+    <div className="p-4 space-y-4 max-w-2xl mx-auto flex flex-col h-screen">
       <button
         className="bg-gray-200 text-gray-700 px-3 py-1 rounded"
         onClick={() => navigate(-1)}
@@ -92,21 +92,24 @@ export default function ChatPage() {
       <h1 className="text-xl font-bold">
         Chat with {assistant ? assistant.name : id}
       </h1>
+codex/render-stylized-response-for-reasoning-model-output
       <div className="border p-2 h-64 overflow-y-auto space-y-4">
         {messages.map((msg) => (
           <div key={msg.id}>
             <div className="font-semibold mb-1">{msg.role}:</div>
             <Markdown text={msg.content} />
+
           </div>
         ))}
         {waiting && (
-          <div>
-            <span className="font-semibold">assistant: </span>
-            <span className="loading-dots text-gray-500">
-              <span></span>
-              <span></span>
-              <span></span>
-            </span>
+          <div className="flex justify-start">
+            <div className="rounded px-3 py-2 bg-gray-200">
+              <span className="loading-dots text-gray-500">
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
+            </div>
           </div>
         )}
       </div>
