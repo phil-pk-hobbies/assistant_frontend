@@ -8,10 +8,18 @@ export interface Assistant {
   model: string;
 }
 
+interface Message {
+  id: string;
+  role: string;
+  content: string;
+}
+
 export default function HomePage() {
   const [assistants, setAssistants] = useState<Assistant[]>([]);
   const [status, setStatus] = useState<string | null>(null);
   const [filter, setFilter] = useState('all');
+  const [search, setSearch] = useState('');
+  const [messagesByAssistant, setMessagesByAssistant] = useState<Record<string, Message[]>>({});
   const navigate = useNavigate();
 
   const deleteAssistant = async (id: string) => {
@@ -46,13 +54,48 @@ export default function HomePage() {
     }
   };
 
+  const fetchMessagesForAssistant = async (id: string) => {
+    if (messagesByAssistant[id]) {
+      return;
+    }
+    try {
+      const res = await fetch(`/api/messages/?assistant=${id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setMessagesByAssistant((m) => ({ ...m, [id]: data }));
+      }
+    } catch {
+      // ignore errors
+    }
+  };
+
   useEffect(() => {
     void fetchAssistants();
   }, []);
 
-  const visible = assistants.filter((a) =>
-    filter === 'all' ? true : a.model === filter
-  );
+  useEffect(() => {
+    if (search.trim() !== '') {
+      assistants.forEach((a) => {
+        void fetchMessagesForAssistant(a.id);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, assistants]);
+
+  const visible = assistants.filter((a) => {
+    if (filter !== 'all' && a.model !== filter) {
+      return false;
+    }
+    const q = search.trim().toLowerCase();
+    if (q === '') {
+      return true;
+    }
+    if (a.name.toLowerCase().includes(q) || a.model.toLowerCase().includes(q)) {
+      return true;
+    }
+    const msgs = messagesByAssistant[a.id] || [];
+    return msgs.some((m) => m.content.toLowerCase().includes(q));
+  });
 
   return (
     <div className="p-4 space-y-4 max-w-[640px] mx-auto relative">
@@ -71,6 +114,14 @@ export default function HomePage() {
           </label>
         ))}
       </div>
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Search"
+        className="border p-1 rounded w-full"
+        aria-label="Search"
+      />
       <div className="grid gap-4">
         {visible.map((assistant) => (
           <div
