@@ -81,26 +81,26 @@ export default function EditAssistantPage() {
       <h1 className="text-xl font-bold">Edit Assistant</h1>
       <div className="space-y-2">
         <input
-          className="border p-2 w-full"
+          className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Name"
         />
         <textarea
-          className="border p-2 w-full"
+          className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Description"
         />
         <textarea
-          className="border p-2 w-full"
+          className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
           value={instructions}
           onChange={(e) => setInstructions(e.target.value)}
           placeholder="Instructions"
         />
         <select
-          className="border p-2 w-full"
+          className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
           value={model}
           onChange={(e) => setModel(e.target.value)}
         >
@@ -112,14 +112,14 @@ export default function EditAssistantPage() {
           ))}
         </select>
         <input
-          className="border p-2 w-full"
+          className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
           type="text"
           value={tools}
           onChange={(e) => setTools(e.target.value)}
           placeholder="Tools (comma separated)"
         />
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-accent text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={waiting}
           onClick={updateAssistant}
         >

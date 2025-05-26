@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --accentBlue: #0A84FF;
+  --errorRed: #FF3B30;
+  --grey90: #F2F2F7;
+  --grey60: #8E8E93;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+}
+
 /* Loading dots animation used in the chat while waiting for a reply */
 .loading-dots span {
   @apply inline-block w-1 h-1 mx-0.5 bg-current rounded-full;
