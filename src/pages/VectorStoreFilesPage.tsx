@@ -1,0 +1,58 @@
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+
+interface VectorFile {
+  id: string;
+  filename: string;
+  [key: string]: any;
+}
+
+export default function VectorStoreFilesPage() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const [files, setFiles] = useState<VectorFile[]>([]);
+  const [status, setStatus] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchFiles = async () => {
+      if (!id) return;
+      try {
+        const res = await fetch(`/api/assistants/${id}/vector-store/files/`);
+        if (res.ok) {
+          const data = await res.json();
+          setFiles(data);
+        } else if (res.status === 404) {
+          const msg = await res.text();
+          setStatus(msg || 'No vector store for this assistant.');
+        } else {
+          const msg = await res.text();
+          throw new Error(msg || res.statusText);
+        }
+      } catch (err: any) {
+        setStatus(`Error: ${err.message}`);
+      }
+    };
+
+    void fetchFiles();
+  }, [id]);
+
+  return (
+    <div className="p-4 space-y-4 max-w-md mx-auto">
+      <button
+        className="bg-gray-200 text-gray-700 px-3 py-1 rounded"
+        onClick={() => navigate(-1)}
+      >
+        Back
+      </button>
+      <h1 className="text-xl font-bold">Vector Store Files</h1>
+      {status && <p>{status}</p>}
+      {files.length > 0 && (
+        <ul className="list-disc list-inside space-y-1">
+          {files.map((f) => (
+            <li key={f.id}>{f.filename}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
