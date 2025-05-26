@@ -82,7 +82,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="p-4 space-y-4 max-w-2xl mx-auto flex flex-col h-screen">
+    <div className="p-4 space-y-4 flex flex-col h-screen w-full max-w-4xl mx-auto">
       <button
         className="bg-gray-200 text-gray-700 px-3 py-1 rounded"
         onClick={() => navigate(-1)}
@@ -92,13 +92,17 @@ export default function ChatPage() {
       <h1 className="text-xl font-bold">
         Chat with {assistant ? assistant.name : id}
       </h1>
-codex/render-stylized-response-for-reasoning-model-output
-      <div className="border p-2 h-64 overflow-y-auto space-y-4">
+      <div className="border p-2 flex-1 overflow-y-auto space-y-4">
         {messages.map((msg) => (
-          <div key={msg.id}>
-            <div className="font-semibold mb-1">{msg.role}:</div>
-            <Markdown text={msg.content} />
-
+          <div
+            key={msg.id}
+            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+          >
+            <div
+              className={`rounded px-3 py-2 ${msg.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+            >
+              <Markdown text={msg.content} />
+            </div>
           </div>
         ))}
         {waiting && (
