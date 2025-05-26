@@ -67,7 +67,16 @@ export default function HomePage() {
               <p className="text-sm text-gray-500">Model: {assistant.model}</p>
             </div>
             <button
-              className="ml-4 bg-red-500 text-white px-2 py-1 rounded"
+              className="ml-4 bg-gray-200 text-gray-700 px-2 py-1 rounded"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/assistants/${assistant.id}/edit`);
+              }}
+            >
+              Edit
+            </button>
+            <button
+              className="ml-2 bg-red-500 text-white px-2 py-1 rounded"
               onClick={(e) => {
                 e.stopPropagation();
                 void deleteAssistant(assistant.id);
