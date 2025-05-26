@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  @apply bg-gray-50 text-gray-900;
+}
+
 /* Loading dots animation used in the chat while waiting for a reply */
 .loading-dots span {
   @apply inline-block w-1 h-1 mx-0.5 bg-current rounded-full;

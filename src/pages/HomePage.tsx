@@ -50,24 +50,34 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="p-4 space-y-4 max-w-2xl mx-auto">
-      <h1 className="text-xl font-bold">Assistants</h1>
+    <div className="p-4 space-y-6 max-w-3xl mx-auto">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Assistants</h1>
+        <button
+          className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700"
+          onClick={() => navigate('/assistants/new')}
+        >
+          New Assistant
+        </button>
+      </div>
       <div className="grid gap-4">
         {assistants.map((assistant) => (
           <div
             key={assistant.id}
-            className="border p-4 rounded cursor-pointer hover:bg-gray-50 flex items-start"
+            className="border rounded-lg p-4 cursor-pointer bg-white hover:shadow-md transition flex items-start"
             onClick={() => navigate(`/assistants/${assistant.id}`)}
           >
             <div className="flex-grow">
-              <h2 className="text-lg font-semibold">{assistant.name}</h2>
-              <p className="text-sm text-gray-700 whitespace-pre-line">
+              <h2 className="text-lg font-semibold text-gray-900">
+                {assistant.name}
+              </h2>
+              <p className="text-sm text-gray-700 whitespace-pre-line mb-1">
                 {assistant.description}
               </p>
-              <p className="text-sm text-gray-500">Model: {assistant.model}</p>
+              <p className="text-xs text-gray-500">Model: {assistant.model}</p>
             </div>
             <button
-              className="ml-4 bg-red-500 text-white px-2 py-1 rounded"
+              className="ml-4 bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
               onClick={(e) => {
                 e.stopPropagation();
                 void deleteAssistant(assistant.id);
@@ -78,13 +88,7 @@ export default function HomePage() {
           </div>
         ))}
       </div>
-      <button
-        className="bg-blue-500 text-white px-4 py-2 rounded"
-        onClick={() => navigate('/assistants/new')}
-      >
-        New Assistant
-      </button>
-      {status && <p>{status}</p>}
+      {status && <p className="text-red-600">{status}</p>}
     </div>
   );
 }

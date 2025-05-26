@@ -81,37 +81,53 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="p-4 space-y-4 max-w-2xl mx-auto">
+    <div className="p-4 space-y-6 max-w-2xl mx-auto">
       <button
-        className="bg-gray-200 text-gray-700 px-3 py-1 rounded"
+        className="bg-gray-200 text-gray-700 px-3 py-1 rounded hover:bg-gray-300"
         onClick={() => navigate(-1)}
       >
         Back
       </button>
-      <h1 className="text-xl font-bold">
+      <h1 className="text-2xl font-bold">
         Chat with {assistant ? assistant.name : id}
       </h1>
-      <div className="border p-2 h-64 overflow-y-auto space-y-2">
+      <div className="border p-4 h-64 overflow-y-auto space-y-3 bg-white rounded-lg">
         {messages.map((msg) => (
-          <div key={msg.id}>
-            <span className="font-semibold">{msg.role}: </span>
-            {msg.content}
+          <div
+            key={msg.id}
+            className={
+              msg.role === 'user'
+                ? 'flex justify-end'
+                : 'flex justify-start'
+            }
+          >
+            <div
+              className={
+                'px-3 py-2 rounded-lg max-w-xs break-words ' +
+                (msg.role === 'user'
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-100 text-gray-900')
+              }
+            >
+              {msg.content}
+            </div>
           </div>
         ))}
         {waiting && (
-          <div>
-            <span className="font-semibold">assistant: </span>
-            <span className="loading-dots text-gray-500">
-              <span></span>
-              <span></span>
-              <span></span>
-            </span>
+          <div className="flex justify-start">
+            <div className="px-3 py-2 rounded-lg bg-gray-100 text-gray-500">
+              <span className="loading-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
+            </div>
           </div>
         )}
       </div>
       <div className="flex space-x-2">
         <input
-          className="border p-2 flex-grow"
+          className="border p-2 flex-grow rounded"
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -124,14 +140,14 @@ export default function ChatPage() {
           placeholder="Type a message"
         />
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={waiting}
           onClick={sendMessage}
         >
           Send
         </button>
       </div>
-      {status && <p>{status}</p>}
+      {status && <p className="text-red-600">{status}</p>}
     </div>
   );
 }

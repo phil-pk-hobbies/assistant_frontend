@@ -60,36 +60,36 @@ export default function CreateAssistantPage() {
   };
 
   return (
-    <div className="p-4 space-y-4 max-w-md mx-auto">
+    <div className="p-4 space-y-6 max-w-md mx-auto">
       <button
-        className="bg-gray-200 text-gray-700 px-3 py-1 rounded"
+        className="bg-gray-200 text-gray-700 px-3 py-1 rounded hover:bg-gray-300"
         onClick={() => navigate(-1)}
       >
         Back
       </button>
-      <h1 className="text-xl font-bold">Create Assistant</h1>
-      <div className="space-y-2">
+      <h1 className="text-2xl font-bold">Create Assistant</h1>
+      <div className="space-y-3 bg-white p-4 border rounded-lg shadow">
         <input
-          className="border p-2 w-full"
+          className="border p-2 w-full rounded"
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Name"
         />
         <textarea
-          className="border p-2 w-full"
+          className="border p-2 w-full rounded"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Description"
         />
         <textarea
-          className="border p-2 w-full"
+          className="border p-2 w-full rounded"
           value={instructions}
           onChange={(e) => setInstructions(e.target.value)}
           placeholder="Instructions"
         />
         <select
-          className="border p-2 w-full"
+          className="border p-2 w-full rounded"
           value={model}
           onChange={(e) => setModel(e.target.value)}
         >
@@ -101,19 +101,19 @@ export default function CreateAssistantPage() {
           ))}
         </select>
         <input
-          className="border p-2 w-full"
+          className="border p-2 w-full rounded"
           type="text"
           value={tools}
           onChange={(e) => setTools(e.target.value)}
           placeholder="Tools (comma separated)"
         />
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
           onClick={createAssistant}
         >
           Create
         </button>
-        {status && <p>{status}</p>}
+        {status && <p className="text-red-600">{status}</p>}
       </div>
     </div>
   );
