@@ -27,7 +27,13 @@ export default function EditAssistantPage() {
         setInstructions(data.instructions || '');
         setModel(data.model || '');
         if (Array.isArray(data.tools)) {
-          setFileSearch(data.tools.includes('file_search'));
+          setFileSearch(
+            data.tools.some((t: any) =>
+              typeof t === 'string'
+                ? t === 'file_search'
+                : t && t.type === 'file_search'
+            )
+          );
         }
         if (Array.isArray(data.files)) {
           setExistingFiles(data.files);
@@ -56,6 +62,9 @@ export default function EditAssistantPage() {
       if (model) form.append('model', model);
       if (fileSearch) {
         form.append('tools', 'file_search');
+      } else {
+        // include tools field so the server clears any existing tools
+        form.append('tools', '');
       }
       newFiles.forEach((f) => form.append('files', f));
       removeFiles.forEach((id) => form.append('remove_files', id));
