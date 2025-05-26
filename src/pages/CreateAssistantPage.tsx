@@ -11,9 +11,14 @@ export default function CreateAssistantPage() {
   const [model, setModel] = useState('');
   const [files, setFiles] = useState<File[]>([]);
   const [status, setStatus] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
   const navigate = useNavigate();
 
   const createAssistant = async () => {
+    if (creating) {
+      return;
+    }
+    setCreating(true);
     try {
       const form = new FormData();
       form.append('name', name);
@@ -37,6 +42,8 @@ export default function CreateAssistantPage() {
       navigate('/');
     } catch (err: any) {
       setStatus(`Error: ${err.message}`);
+    } finally {
+      setCreating(false);
     }
   };
 
@@ -96,10 +103,19 @@ export default function CreateAssistantPage() {
           onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
         />
         <button
-          className="bg-accent text-white px-4 py-2 rounded-lg"
+          className={`px-4 py-2 rounded-lg text-white ${creating ? 'bg-grey60' : 'bg-accent'} disabled:cursor-not-allowed`}
+          disabled={creating}
           onClick={createAssistant}
         >
-          Create
+          {creating ? (
+            <span className="loading-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+          ) : (
+            'Create'
+          )}
         </button>
         {status && <p>{status}</p>}
       </div>
