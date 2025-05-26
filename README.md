@@ -62,4 +62,6 @@ To chat with an assistant the frontend now posts messages to `/api/assistants/<u
 
 When creating a new assistant you can select a model from a dropdown menu. The list now includes a fixed set of options (`gpt-4`, `gpt-4o`, `o3-mini`) and the chosen model is sent along with the create request.
 
+File uploads are also supported during assistant creation. Select one or more files in the form and they will be uploaded using `multipart/form-data` when the request is sent to `/api/assistants/`.
+
 

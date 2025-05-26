@@ -9,25 +9,27 @@ export default function CreateAssistantPage() {
   const [instructions, setInstructions] = useState('');
   const [tools, setTools] = useState('');
   const [model, setModel] = useState('');
+  const [files, setFiles] = useState<File[]>([]);
   const [status, setStatus] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const createAssistant = async () => {
     try {
-      const payload = {
-        name,
-        description,
-        instructions,
-        model,
-        tools: tools
-          .split(',')
-          .map((t) => t.trim())
-          .filter((t) => t.length > 0),
-      };
+      const form = new FormData();
+      form.append('name', name);
+      if (description.trim() !== '') form.append('description', description);
+      if (instructions.trim() !== '') form.append('instructions', instructions);
+      if (model) form.append('model', model);
+      tools
+        .split(',')
+        .map((t) => t.trim())
+        .filter((t) => t.length > 0)
+        .forEach((t) => form.append('tools', t));
+      files.forEach((f) => form.append('files', f));
+
       const res = await fetch('/api/assistants/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: form,
       });
       if (!res.ok) {
         const data = await res.text();
@@ -87,6 +89,12 @@ export default function CreateAssistantPage() {
           value={tools}
           onChange={(e) => setTools(e.target.value)}
           placeholder="Tools (comma separated)"
+        />
+        <input
+          className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
+          type="file"
+          multiple
+          onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
         />
         <button
           className="bg-accent text-white px-4 py-2 rounded-lg"
