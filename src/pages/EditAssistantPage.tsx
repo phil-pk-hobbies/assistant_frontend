@@ -12,6 +12,9 @@ export default function EditAssistantPage() {
   const [model, setModel] = useState('');
   const [status, setStatus] = useState<string | null>(null);
   const [waiting, setWaiting] = useState(false);
+  const [existingFiles, setExistingFiles] = useState<{ id: string; name: string }[]>([]);
+  const [newFiles, setNewFiles] = useState<File[]>([]);
+  const [removeFiles, setRemoveFiles] = useState<Set<string>>(new Set());
   const navigate = useNavigate();
 
   const fetchAssistant = async () => {
@@ -25,6 +28,9 @@ export default function EditAssistantPage() {
         setModel(data.model || '');
         if (Array.isArray(data.tools)) {
           setFileSearch(data.tools.includes('file_search'));
+        }
+        if (Array.isArray(data.files)) {
+          setExistingFiles(data.files);
         }
       }
     } catch {
@@ -43,17 +49,20 @@ export default function EditAssistantPage() {
     setStatus(null);
     setWaiting(true);
     try {
-      const payload = {
-        name,
-        description,
-        instructions,
-        model,
-        tools: fileSearch ? ['file_search'] : [],
-      };
+      const form = new FormData();
+      form.append('name', name);
+      if (description.trim() !== '') form.append('description', description);
+      if (instructions.trim() !== '') form.append('instructions', instructions);
+      if (model) form.append('model', model);
+      if (fileSearch) {
+        form.append('tools', 'file_search');
+      }
+      newFiles.forEach((f) => form.append('files', f));
+      removeFiles.forEach((id) => form.append('remove_files', id));
+
       const res = await fetch(`/api/assistants/${id}/`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        method: 'PATCH',
+        body: form,
       });
       if (!res.ok) {
         const data = await res.text();
@@ -116,6 +125,37 @@ export default function EditAssistantPage() {
           />
           <span>Enable file search</span>
         </label>
+        {existingFiles.length > 0 && (
+          <div className="space-y-1">
+            <p className="font-semibold">Remove files</p>
+            {existingFiles.map((f) => (
+              <label key={f.id} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={removeFiles.has(f.id)}
+                  onChange={(e) => {
+                    setRemoveFiles((cur) => {
+                      const next = new Set(cur);
+                      if (e.target.checked) {
+                        next.add(f.id);
+                      } else {
+                        next.delete(f.id);
+                      }
+                      return next;
+                    });
+                  }}
+                />
+                <span>{f.name}</span>
+              </label>
+            ))}
+          </div>
+        )}
+        <input
+          className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
+          type="file"
+          multiple
+          onChange={(e) => setNewFiles(Array.from(e.target.files ?? []))}
+        />
         <button
           className="bg-accent text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={waiting}
