@@ -11,6 +11,7 @@ export default function EditAssistantPage() {
   const [tools, setTools] = useState('');
   const [model, setModel] = useState('');
   const [status, setStatus] = useState<string | null>(null);
+  const [waiting, setWaiting] = useState(false);
   const navigate = useNavigate();
 
   const fetchAssistant = async () => {
@@ -36,6 +37,11 @@ export default function EditAssistantPage() {
   }, [id]);
 
   const updateAssistant = async () => {
+    if (waiting) {
+      return;
+    }
+    setStatus(null);
+    setWaiting(true);
     try {
       const payload = {
         name,
@@ -56,10 +62,11 @@ export default function EditAssistantPage() {
         const data = await res.text();
         throw new Error(data || res.statusText);
       }
-      setStatus('Assistant updated successfully');
       navigate('/');
     } catch (err: any) {
       setStatus(`Error: ${err.message}`);
+    } finally {
+      setWaiting(false);
     }
   };
 
@@ -112,7 +119,8 @@ export default function EditAssistantPage() {
           placeholder="Tools (comma separated)"
         />
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={waiting}
           onClick={updateAssistant}
         >
           Update
