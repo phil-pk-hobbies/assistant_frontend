@@ -27,7 +27,13 @@ export default function EditAssistantPage() {
         setInstructions(data.instructions || '');
         setModel(data.model || '');
         if (Array.isArray(data.tools)) {
-          setFileSearch(data.tools.includes('file_search'));
+          setFileSearch(
+            data.tools.some((t: any) =>
+              typeof t === 'string'
+                ? t === 'file_search'
+                : t && t.type === 'file_search'
+            )
+          );
         }
         if (Array.isArray(data.files)) {
           setExistingFiles(data.files);
