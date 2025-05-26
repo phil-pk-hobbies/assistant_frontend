@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import type { Assistant } from './HomePage';
+import Markdown from '../components/Markdown';
 
 interface Message {
   id: string;
@@ -91,17 +92,13 @@ export default function ChatPage() {
       <h1 className="text-xl font-bold">
         Chat with {assistant ? assistant.name : id}
       </h1>
-      <div className="border p-2 flex-grow overflow-y-auto space-y-2 flex flex-col">
+codex/render-stylized-response-for-reasoning-model-output
+      <div className="border p-2 h-64 overflow-y-auto space-y-4">
         {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            <div
-              className={`rounded px-3 py-2 max-w-[75%] whitespace-pre-wrap ${msg.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-            >
-              {msg.content}
-            </div>
+          <div key={msg.id}>
+            <div className="font-semibold mb-1">{msg.role}:</div>
+            <Markdown text={msg.content} />
+
           </div>
         ))}
         {waiting && (
