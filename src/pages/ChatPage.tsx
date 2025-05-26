@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import type { Assistant } from './HomePage';
 import Markdown from '../components/Markdown';
@@ -17,6 +17,8 @@ export default function ChatPage() {
   const [input, setInput] = useState('');
   const [status, setStatus] = useState<string | null>(null);
   const [waiting, setWaiting] = useState(false);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   const fetchAssistant = async () => {
     try {
@@ -49,6 +51,13 @@ export default function ChatPage() {
     void fetchAssistant();
     void fetchMessages();
   }, [id]);
+
+  useEffect(() => {
+    const list = listRef.current;
+    if (list) {
+      list.scrollTop = list.scrollHeight;
+    }
+  }, [messages]);
 
   const clearChat = async () => {
     if (waiting) {
@@ -123,14 +132,19 @@ export default function ChatPage() {
       <h1 className="text-xl font-bold">
         Chat with {assistant ? assistant.name : id}
       </h1>
-      <div className="border p-2 flex-1 overflow-y-auto space-y-4">
+      <div
+        ref={listRef}
+        className="border p-2 flex-1 overflow-y-auto space-y-4"
+        role="log"
+        aria-live="polite"
+      >
         {messages.map((msg) => (
           <div
             key={msg.id}
             className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`rounded px-3 py-2 ${msg.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+              className={`rounded-lg px-3 py-2 ${msg.role === 'user' ? 'bg-accent text-white' : 'bg-grey90'}`}
             >
               <Markdown text={msg.content} />
             </div>
@@ -138,7 +152,7 @@ export default function ChatPage() {
         ))}
         {waiting && (
           <div className="flex justify-start">
-            <div className="rounded px-3 py-2 bg-gray-200">
+            <div className="rounded-lg px-3 py-2 bg-grey90">
               <span className="loading-dots text-gray-500">
                 <span></span>
                 <span></span>
@@ -149,13 +163,21 @@ export default function ChatPage() {
         )}
       </div>
       <div className="flex space-x-2">
-        <input
-          className="border p-2 flex-grow"
-          type="text"
+        <textarea
+          ref={inputRef}
+          rows={1}
+          className="border p-2 flex-grow resize-none overflow-hidden"
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onInput={() => {
+            const el = inputRef.current;
+            if (el) {
+              el.style.height = 'auto';
+              el.style.height = `${Math.min(el.scrollHeight, 6 * 24)}px`;
+            }
+          }}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' && input.trim().length > 0 && !waiting) {
+            if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
               e.preventDefault();
               void sendMessage();
             }
@@ -163,7 +185,7 @@ export default function ChatPage() {
           placeholder="Type a message"
         />
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-accent text-white px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={waiting}
           onClick={sendMessage}
         >

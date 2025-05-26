@@ -11,6 +11,7 @@ export interface Assistant {
 export default function HomePage() {
   const [assistants, setAssistants] = useState<Assistant[]>([]);
   const [status, setStatus] = useState<string | null>(null);
+  const [filter, setFilter] = useState('all');
   const navigate = useNavigate();
 
   const deleteAssistant = async (id: string) => {
@@ -49,14 +50,32 @@ export default function HomePage() {
     void fetchAssistants();
   }, []);
 
+  const visible = assistants.filter((a) =>
+    filter === 'all' ? true : a.model === filter
+  );
+
   return (
-    <div className="p-4 space-y-4 max-w-2xl mx-auto">
+    <div className="p-4 space-y-4 max-w-[640px] mx-auto relative">
       <h1 className="text-xl font-bold">Assistants</h1>
+      <div className="flex gap-2" role="group" aria-label="model filter">
+        {['all', 'gpt-4o', 'o3-mini'].map((m) => (
+          <label key={m} className="flex items-center gap-1 text-sm">
+            <input
+              type="radio"
+              name="filter"
+              value={m}
+              checked={filter === m}
+              onChange={() => setFilter(m)}
+            />
+            {m === 'all' ? 'All' : m}
+          </label>
+        ))}
+      </div>
       <div className="grid gap-4">
-        {assistants.map((assistant) => (
+        {visible.map((assistant) => (
           <div
             key={assistant.id}
-            className="border p-4 rounded cursor-pointer hover:bg-gray-50 flex items-start"
+            className="border p-4 rounded-lg cursor-pointer hover:bg-gray-50 flex items-start"
             onClick={() => navigate(`/assistants/${assistant.id}`)}
           >
             <div className="flex-grow">
@@ -67,31 +86,36 @@ export default function HomePage() {
               <p className="text-sm text-gray-500">Model: {assistant.model}</p>
             </div>
             <button
-              className="ml-4 bg-gray-200 text-gray-700 px-2 py-1 rounded"
+              aria-label="Edit"
+              title="Edit"
+              className="ml-4 text-gray-700 px-2 py-1 rounded focus:outline focus:outline-2 focus:outline-accent"
               onClick={(e) => {
                 e.stopPropagation();
                 navigate(`/assistants/${assistant.id}/edit`);
               }}
             >
-              Edit
+              ✏️
             </button>
             <button
-              className="ml-2 bg-red-500 text-white px-2 py-1 rounded"
+              aria-label="Delete"
+              title="Delete"
+              className="ml-2 text-red-600 px-2 py-1 rounded focus:outline focus:outline-2 focus:outline-accent"
               onClick={(e) => {
                 e.stopPropagation();
                 void deleteAssistant(assistant.id);
               }}
             >
-              Delete
+              🗑
             </button>
           </div>
         ))}
       </div>
       <button
-        className="bg-blue-500 text-white px-4 py-2 rounded"
+        className="bg-accent text-white px-4 py-2 rounded-full fixed bottom-6 right-6 focus:outline focus:outline-2 focus:outline-accent"
         onClick={() => navigate('/assistants/new')}
+        aria-label="New Assistant"
       >
-        New Assistant
+        +
       </button>
       {status && <p>{status}</p>}
     </div>
