@@ -82,7 +82,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="p-4 space-y-4 flex flex-col h-screen w-full max-w-4xl mx-auto">
+    <div className="p-4 space-y-4 flex flex-col h-screen w-full mx-auto">
       <button
         className="bg-gray-200 text-gray-700 px-3 py-1 rounded"
         onClick={() => navigate(-1)}
