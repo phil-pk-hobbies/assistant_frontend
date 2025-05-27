@@ -13,7 +13,7 @@ export default function EditAssistantPage() {
   const [status, setStatus] = useState<string | null>(null);
   const [waiting, setWaiting] = useState(false);
   const [existingFiles, setExistingFiles] = useState<{ id: string; name: string }[]>([]);
-  const [newFiles, setNewFiles] = useState<File[]>([]);
+  const [newFiles, setNewFiles] = useState<(File | null)[]>([]);
   const [removeFiles, setRemoveFiles] = useState<Set<string>>(new Set());
   const [vectorFiles, setVectorFiles] = useState<{ id: string; filename: string }[]>([]);
   const [vectorStatus, setVectorStatus] = useState<string | null>(null);
@@ -100,7 +100,11 @@ export default function EditAssistantPage() {
         // clear existing tools by sending an empty value
         form.append('tools', '[]');
       }
-      newFiles.forEach((f) => form.append('files', f));
+      newFiles.forEach((f) => {
+        if (f) {
+          form.append('files', f);
+        }
+      });
       removeFiles.forEach((id) => form.append('remove_files', id));
 
       const res = await fetch(`/api/assistants/${id}/`, {
@@ -204,12 +208,29 @@ export default function EditAssistantPage() {
             ))}
           </div>
         )}
-        <input
-          className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
-          type="file"
-          multiple
-          onChange={(e) => setNewFiles(Array.from(e.target.files ?? []))}
-        />
+        {newFiles.map((_, i) => (
+          <input
+            key={i}
+            className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
+            type="file"
+            onChange={(e) =>
+              setNewFiles((cur) => {
+                const next = [...cur];
+                next[i] = e.target.files?.[0] ?? null;
+                return next;
+              })
+            }
+          />
+        ))}
+        {newFiles.length < 20 && (
+          <button
+            type="button"
+            className="bg-gray-200 text-gray-700 px-2 py-1 rounded"
+            onClick={() => setNewFiles((cur) => [...cur, null])}
+          >
+            Add File
+          </button>
+        )}
         <button
           className="bg-accent text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={waiting}
