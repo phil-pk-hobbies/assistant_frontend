@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
-import Button from '../components/Button';
-import Input from '../components/Input';
+import Button from '../components/ui/Button';
+import Input from '../components/ui/Input';
+import TextArea from '../components/ui/TextArea';
+import Select from '../components/ui/Select';
 
 const MODEL_OPTIONS = ['gpt-4', 'gpt-4o', 'o3-mini'];
 
@@ -51,7 +53,7 @@ export default function CreateAssistantPage() {
 
   return (
     <div className="p-4 space-y-4 max-w-md mx-auto">
-      <Button className="bg-neutral2 text-text-primary" onClick={() => navigate(-1)}>
+      <Button variant="secondary" onClick={() => navigate(-1)}>
         Back
       </Button>
       <h1 className="text-xl font-bold">Create Assistant</h1>
@@ -59,7 +61,7 @@ export default function CreateAssistantPage() {
         <div className="space-y-1">
           <span>Name</span>
           <Input
-            className="w-full focus:outline focus:outline-2 focus:outline-primary"
+            className="w-full"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -68,8 +70,8 @@ export default function CreateAssistantPage() {
         </div>
         <div className="space-y-1">
           <span>Description</span>
-          <textarea
-            className="border border-neutral3 p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-primary"
+          <TextArea
+            className="w-full"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Description"
@@ -77,8 +79,8 @@ export default function CreateAssistantPage() {
         </div>
         <div className="space-y-1">
           <span>Instructions</span>
-          <textarea
-            className="border border-neutral3 p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-primary"
+          <TextArea
+            className="w-full"
             value={instructions}
             onChange={(e) => setInstructions(e.target.value)}
             placeholder="Instructions"
@@ -86,8 +88,8 @@ export default function CreateAssistantPage() {
         </div>
         <div className="space-y-1">
           <span>Model</span>
-          <select
-            className="border border-neutral3 p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-primary"
+          <Select
+            className="w-full"
             value={model}
             onChange={(e) => setModel(e.target.value)}
           >
@@ -97,7 +99,7 @@ export default function CreateAssistantPage() {
                 {m}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
         <div className="flex items-center space-x-2">
           <Input
@@ -113,7 +115,7 @@ export default function CreateAssistantPage() {
             <div className="flex-1 space-y-1">
               <span>File</span>
               <Input
-                className="w-full focus:outline focus:outline-2 focus:outline-primary"
+                className="w-full"
                 type="file"
                 onChange={(e) =>
                   setFiles((cur) =>
@@ -128,7 +130,8 @@ export default function CreateAssistantPage() {
             </div>
             <Button
               type="button"
-              className="text-red-600 text-xl leading-none px-2 focus:outline focus:outline-2 focus:outline-primary bg-transparent"
+              variant="ghost"
+              className="text-red-600 text-xl leading-none px-2"
               onClick={() =>
                 setFiles((cur) => cur.filter((obj) => obj.id !== f.id))
               }
@@ -141,7 +144,8 @@ export default function CreateAssistantPage() {
         {files.length < 20 && (
           <Button
             type="button"
-            className="bg-neutral2 text-text-primary px-2 py-1"
+            variant="secondary"
+            size="sm"
             onClick={() =>
               setFiles((cur) => [
                 ...cur,
@@ -153,7 +157,7 @@ export default function CreateAssistantPage() {
           </Button>
         )}
         <Button
-          className={`px-4 py-2 rounded-lg ${creating ? 'bg-neutral5' : 'bg-primary'} disabled:cursor-not-allowed`}
+          className={creating ? 'bg-neutral5' : ''}
           disabled={creating}
           onClick={createAssistant}
         >

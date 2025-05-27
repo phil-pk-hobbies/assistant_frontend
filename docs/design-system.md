@@ -21,3 +21,24 @@ Font sizes are tokenized from `--fs-sm` up to `--fs-3xl` and follow a minor scal
 Reference tokens with `var(--token-name)` in CSS or use the Tailwind classes that map to them (e.g. `bg-primary`, `text-danger`, `p-4`).
 
 ![Storybook palette](design-system.png)
+
+## Buttons & Inputs
+
+Use the components in `src/components/ui` for consistent styling.
+
+```tsx
+import Button from '../components/ui/Button'
+import Input from '../components/ui/Input'
+
+<Button variant="primary">Save</Button>
+<Input placeholder="Email" />
+```
+
+Avoid styling raw elements yourself:
+
+```tsx
+// Don't
+<button className="bg-blue-500 px-2">Save</button>
+```
+
+See the Storybook docs for examples of all variants.

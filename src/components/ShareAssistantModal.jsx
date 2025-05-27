@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useQueryClient } from '@tanstack/react-query';
+import Button from './ui/Button';
+import Input from './ui/Input';
+import Select from './ui/Select';
 import {
   useAssistantUserShares,
   useAssistantDeptShares,
@@ -115,9 +118,9 @@ export default function ShareAssistantModal({ id, open, onClose, owner }) {
       <div className="bg-white p-4 rounded max-h-[90vh] overflow-y-auto w-full max-w-lg">
         <h2 className="text-lg font-bold mb-2">Share Assistant</h2>
         <div className="flex gap-2 mb-4">
-          <button className={`px-2 py-1 rounded ${tab==='users'?'bg-accent text-white':'bg-gray-200'}`} onClick={()=>setTab('users')}>Users</button>
-          <button className={`px-2 py-1 rounded ${tab==='depts'?'bg-accent text-white':'bg-gray-200'}`} onClick={()=>setTab('depts')}>Departments</button>
-          <button className="ml-auto" onClick={onClose}>✖️</button>
+          <Button size="sm" variant={tab==='users'?'primary':'secondary'} onClick={()=>setTab('users')}>Users</Button>
+          <Button size="sm" variant={tab==='depts'?'primary':'secondary'} onClick={()=>setTab('depts')}>Departments</Button>
+          <Button size="sm" variant="ghost" className="ml-auto" onClick={onClose}>✖️</Button>
         </div>
         {tab==='users' && (
           <div className="space-y-2">
@@ -127,13 +130,13 @@ export default function ShareAssistantModal({ id, open, onClose, owner }) {
                   <tr key={u.id} className="border-b">
                     <td className="py-1">{u.name}</td>
                     <td>
-                      <select value={u.permission} onChange={e=>changeUserPerm(u.id,e.target.value)} className="border p-1 text-sm">
+                      <Select value={u.permission} onChange={e=>changeUserPerm(u.id,e.target.value)} className="text-sm">
                         <option value="use">Use</option>
                         <option value="edit">Edit</option>
-                      </select>
+                      </Select>
                     </td>
                     <td>
-                      <button aria-label={`remove ${u.name}`} onClick={()=>removeUser(u.id)}>🗑</button>
+                      <Button variant="ghost" aria-label={`remove ${u.name}`} onClick={()=>removeUser(u.id)}>🗑</Button>
                     </td>
                   </tr>
                 ))}
@@ -141,37 +144,38 @@ export default function ShareAssistantModal({ id, open, onClose, owner }) {
             </table>
             <div className="flex gap-2 items-start mt-2">
               <div className="relative flex-grow">
-                <input
+                <Input
                   value={searchInput}
                   onChange={e => { setSearchInput(e.target.value); setSelUser(''); setShowSuggestions(true); }}
                   onFocus={() => searchInput && setShowSuggestions(true)}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
                   placeholder="Search users"
-                  className="border p-1 w-full"
+                  className="w-full"
                   aria-label="Search users"
                 />
                 {showSuggestions && searchInput && (
                   <ul className="absolute left-0 right-0 mt-1 border bg-white max-h-40 overflow-y-auto z-10 text-sm">
                     {users.filter(u=>!userShares.some(s=>s.id===u.id)).map(u=> (
                       <li key={u.id}>
-                        <button
+                        <Button
                           type="button"
+                          variant="ghost"
                           className="block w-full text-left px-2 py-1 hover:bg-grey90"
                           onMouseDown={e=>e.preventDefault()}
                           onClick={() => { setSelUser(u.id); setSearchInput(`${u.username} - ${u.first_name} ${u.last_name} (${u.department_name})`); setShowSuggestions(false); }}
                         >
                           {u.username} - {u.first_name} {u.last_name} ({u.department_name})
-                        </button>
+                        </Button>
                       </li>
                     ))}
                   </ul>
                 )}
               </div>
-              <select value={perm} onChange={e=>setPerm(e.target.value)} className="border p-1">
+              <Select value={perm} onChange={e=>setPerm(e.target.value)} className="w-auto">
                 <option value="use">Use</option>
                 <option value="edit">Edit</option>
-              </select>
-              <button onClick={addUser} className="bg-accent text-white px-2 py-1 rounded">Add</button>
+              </Select>
+              <Button size="sm" onClick={addUser}>Add</Button>
             </div>
           </div>
         )}
@@ -183,30 +187,30 @@ export default function ShareAssistantModal({ id, open, onClose, owner }) {
                   <tr key={d.id} className="border-b">
                     <td className="py-1">{d.name}</td>
                     <td>
-                      <select value={d.permission} onChange={e=>changeDeptPerm(d.id,e.target.value)} className="border p-1 text-sm">
+                      <Select value={d.permission} onChange={e=>changeDeptPerm(d.id,e.target.value)} className="text-sm">
                         <option value="use">Use</option>
                         <option value="edit">Edit</option>
-                      </select>
+                      </Select>
                     </td>
                     <td>
-                      <button aria-label={`remove ${d.name}`} onClick={()=>removeDept(d.id)}>🗑</button>
+                      <Button variant="ghost" aria-label={`remove ${d.name}`} onClick={()=>removeDept(d.id)}>🗑</Button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
             <div className="flex gap-2 items-center mt-2">
-              <select value={selDept} onChange={e=>setSelDept(e.target.value)} className="border p-1 flex-grow">
+              <Select value={selDept} onChange={e=>setSelDept(e.target.value)} className="flex-grow">
                 <option value="">Select department</option>
                 {departments.filter(dep=>!deptShares.some(s=>s.id===dep.id)).map(dep=>(
                   <option key={dep.id} value={dep.id}>{dep.name}</option>
                 ))}
-              </select>
-              <select value={perm} onChange={e=>setPerm(e.target.value)} className="border p-1">
+              </Select>
+              <Select value={perm} onChange={e=>setPerm(e.target.value)} className="w-auto">
                 <option value="use">Use</option>
                 <option value="edit">Edit</option>
-              </select>
-              <button onClick={addDept} className="bg-accent text-white px-2 py-1 rounded">Add</button>
+              </Select>
+              <Button size="sm" onClick={addDept}>Add</Button>
             </div>
           </div>
         )}
