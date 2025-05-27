@@ -62,8 +62,8 @@ To chat with an assistant the frontend now posts messages to `/api/assistants/<u
 
 When creating a new assistant you can select a model from a dropdown menu. The list now includes a fixed set of options (`gpt-4`, `gpt-4o`, `o3-mini`) and the chosen model is sent along with the create request.
 
-File uploads are also supported during assistant creation. Select one or more files in the form and they will be uploaded using `multipart/form-data` when the request is sent to `/api/assistants/`.
+File uploads are also supported during assistant creation. You may add files individually (up to 20 in total) and they will be uploaded using `multipart/form-data` when the request is sent to `/api/assistants/`.
 
-Existing assistants can be edited in the UI. When updating you may upload additional files or select existing ones to remove. The form submits a `PATCH` request to `/api/assistants/<uuid>/` including any new `files` and a `remove_files` list containing the file IDs to delete.
+Existing assistants can be edited in the UI. When updating you may add new files one at a time (again up to 20) or select existing ones to remove. The form submits a `PATCH` request to `/api/assistants/<uuid>/` including any new `files` and a `remove_files` list containing the file IDs to delete.
 
 

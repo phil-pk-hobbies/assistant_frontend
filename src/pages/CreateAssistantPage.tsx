@@ -9,7 +9,7 @@ export default function CreateAssistantPage() {
   const [instructions, setInstructions] = useState('');
   const [fileSearch, setFileSearch] = useState(false);
   const [model, setModel] = useState('');
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<(File | null)[]>([null]);
   const [status, setStatus] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const navigate = useNavigate();
@@ -28,7 +28,11 @@ export default function CreateAssistantPage() {
       if (fileSearch) {
         form.append('tools', 'file_search');
       }
-      files.forEach((f) => form.append('files', f));
+      files.forEach((f) => {
+        if (f) {
+          form.append('files', f);
+        }
+      });
 
       const res = await fetch('/api/assistants/', {
         method: 'POST',
@@ -96,12 +100,29 @@ export default function CreateAssistantPage() {
           />
           <span>Enable file search</span>
         </label>
-        <input
-          className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
-          type="file"
-          multiple
-          onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
-        />
+        {files.map((_, i) => (
+          <input
+            key={i}
+            className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
+            type="file"
+            onChange={(e) =>
+              setFiles((cur) => {
+                const next = [...cur];
+                next[i] = e.target.files?.[0] ?? null;
+                return next;
+              })
+            }
+          />
+        ))}
+        {files.length < 20 && (
+          <button
+            type="button"
+            className="bg-gray-200 text-gray-700 px-2 py-1 rounded"
+            onClick={() => setFiles((cur) => [...cur, null])}
+          >
+            Add File
+          </button>
+        )}
         <button
           className={`px-4 py-2 rounded-lg text-white ${creating ? 'bg-grey60' : 'bg-accent'} disabled:cursor-not-allowed`}
           disabled={creating}
