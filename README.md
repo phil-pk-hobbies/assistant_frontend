@@ -84,4 +84,14 @@ Admins can manage user accounts at `/admin/users` when logged in. The screen lis
 
 ![Users](docs/users.gif)
 
+## Assistant permissions
+
+Assistants you can access will show a colored badge indicating your level:
+
+![Permissions](docs/permissions.png)
+
+* **Owner** – you created the assistant and can fully manage it.
+* **Edit** – you may update settings and files.
+* **Use** – read-only access for chatting.
+
 
