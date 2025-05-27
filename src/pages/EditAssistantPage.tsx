@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../api/axios';
+import { useAssistant, NotAllowedError } from '../hooks/useAssistant';
 
 const MODEL_OPTIONS = ['gpt-4', 'gpt-4o', 'o3-mini'];
 
@@ -19,6 +20,15 @@ export default function EditAssistantPage() {
   const [vectorFiles, setVectorFiles] = useState<{ id: string; filename: string }[]>([]);
   const [vectorStatus, setVectorStatus] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { data: assistant, error } = useAssistant(id || '');
+  const readonly = !!assistant && assistant.permission === 'use' && !assistant.owner;
+
+  useEffect(() => {
+    if (error instanceof NotAllowedError) {
+      alert('Assistant not available');
+      navigate('/assistants');
+    }
+  }, [error, navigate]);
 
   const deleteVectorFile = async (fileId: string) => {
     if (!id) return;
@@ -58,7 +68,24 @@ export default function EditAssistantPage() {
   };
 
   useEffect(() => {
-    void fetchAssistant();
+    if (assistant) {
+      setName(assistant.name || '');
+      setDescription(assistant.description || '');
+      setInstructions(assistant.instructions || '');
+      setModel(assistant.model || '');
+      if (Array.isArray(assistant.tools)) {
+        setFileSearch(
+          assistant.tools.some((t: any) =>
+            typeof t === 'string'
+              ? t === 'file_search'
+              : t && t.type === 'file_search',
+          ),
+        );
+      }
+      if (Array.isArray(assistant.files)) {
+        setExistingFiles(assistant.files);
+      }
+    }
     const fetchVectorFiles = async () => {
       if (!id) return;
       try {
@@ -87,7 +114,7 @@ export default function EditAssistantPage() {
     };
 
     void fetchVectorFiles();
-  }, [id]);
+  }, [assistant, id]);
 
   const updateAssistant = async () => {
     if (waiting) {
@@ -132,6 +159,9 @@ export default function EditAssistantPage() {
         Back
       </button>
       <h1 className="text-xl font-bold">Edit Assistant</h1>
+      {readonly && (
+        <div className="bg-blue-100 text-blue-800 p-2 rounded">Read-only access</div>
+      )}
       <div className="space-y-2">
         <div className="space-y-1">
           <span>Name</span>
@@ -141,6 +171,7 @@ export default function EditAssistantPage() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Name"
+            disabled={readonly}
           />
         </div>
         <div className="space-y-1">
@@ -150,6 +181,7 @@ export default function EditAssistantPage() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Description"
+            disabled={readonly}
           />
         </div>
         <div className="space-y-1">
@@ -159,6 +191,7 @@ export default function EditAssistantPage() {
             value={instructions}
             onChange={(e) => setInstructions(e.target.value)}
             placeholder="Instructions"
+            disabled={readonly}
           />
         </div>
         <div className="space-y-1">
@@ -167,6 +200,7 @@ export default function EditAssistantPage() {
             className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
             value={model}
             onChange={(e) => setModel(e.target.value)}
+            disabled={readonly}
           >
             <option value="">Select Model</option>
             {MODEL_OPTIONS.map((m) => (
@@ -181,6 +215,7 @@ export default function EditAssistantPage() {
             type="checkbox"
             checked={fileSearch}
             onChange={(e) => setFileSearch(e.target.checked)}
+            disabled={readonly}
           />
           <span>Enable file search</span>
         </div>
@@ -260,7 +295,7 @@ export default function EditAssistantPage() {
             Remove
           </div>
         ))}
-        {newFiles.length < 20 && (
+        {newFiles.length < 20 && !readonly && (
           <button
             type="button"
             className="bg-gray-200 text-gray-700 px-2 py-1 rounded"
@@ -276,7 +311,7 @@ export default function EditAssistantPage() {
         )}
         <button
           className="bg-accent text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={waiting}
+          disabled={waiting || readonly}
           onClick={updateAssistant}
         >
           Update
