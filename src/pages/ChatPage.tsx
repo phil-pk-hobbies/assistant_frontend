@@ -134,16 +134,16 @@ export default function ChatPage() {
             key={msg.id}
             className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
-            <div
-              className={`rounded-lg px-3 py-2 ${msg.role === 'user' ? 'bg-accent text-white' : 'bg-grey90'}`}
-            >
+              <div
+                className={`rounded-lg px-3 py-2 ${msg.role === 'user' ? 'bg-primary text-on-primary' : 'bg-neutral2'}`}
+              >
               <Markdown text={msg.content} />
             </div>
           </div>
         ))}
-        {waiting && (
-          <div className="flex justify-start">
-            <div className="rounded-lg px-3 py-2 bg-grey90">
+          {waiting && (
+            <div className="flex justify-start">
+              <div className="rounded-lg px-3 py-2 bg-neutral2">
               <span className="loading-dots text-gray-500">
                 <span></span>
                 <span></span>
