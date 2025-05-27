@@ -40,6 +40,17 @@ test('non-owner hides Share button', async () => {
   expect(screen.queryByText('Share')).toBeNull();
 });
 
+test('non-owner does not fetch share data', async () => {
+  renderChat(false);
+  await waitFor(() => screen.getByText(/chat with/i));
+  expect(api.get).not.toHaveBeenCalledWith(
+    expect.stringContaining('/shares/users/'),
+  );
+  expect(api.get).not.toHaveBeenCalledWith(
+    expect.stringContaining('/shares/departments/'),
+  );
+});
+
 test('modal lists current shares', async () => {
   api.get.mockImplementation((url) => {
     if (url === '/api/assistants/1/') {
