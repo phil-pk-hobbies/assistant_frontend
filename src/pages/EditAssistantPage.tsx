@@ -239,12 +239,15 @@ export default function EditAssistantPage() {
             ))}
           </div>
         )}
+
         {newFiles.map((f) => (
           <div key={f.id} className="flex items-center space-x-2">
+main
             <input
               className="border p-2 flex-1 rounded-lg focus:outline focus:outline-2 focus:outline-accent"
               type="file"
               onChange={(e) =>
+
                 setNewFiles((cur) =>
                   cur.map((obj) =>
                     obj.id === f.id
@@ -263,6 +266,7 @@ export default function EditAssistantPage() {
             >
               &times;
             </button>
+main
           </div>
         ))}
         {newFiles.length < 20 && (

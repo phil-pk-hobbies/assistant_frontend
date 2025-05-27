@@ -102,12 +102,15 @@ export default function CreateAssistantPage() {
           />
           <span>Enable file search</span>
         </label>
+
         {files.map((f) => (
           <div key={f.id} className="flex items-center space-x-2">
+
             <input
               className="border p-2 flex-1 rounded-lg focus:outline focus:outline-2 focus:outline-accent"
               type="file"
               onChange={(e) =>
+
                 setFiles((cur) =>
                   cur.map((obj) =>
                     obj.id === f.id
@@ -126,6 +129,7 @@ export default function CreateAssistantPage() {
             >
               &times;
             </button>
+main
           </div>
         ))}
         {files.length < 20 && (
