@@ -78,4 +78,10 @@ api requests -> axios instance -> attaches Authorization header
 
 For production the refresh token should be stored in a secure HttpOnly cookie. This prototype keeps it in `localStorage` for simplicity.
 
+## Managing users
+
+Admins can manage user accounts at `/admin/users` when logged in. The screen lists existing users and allows creating new ones, toggling active state and resetting passwords. Generated passwords are shown once in a toast and cannot be retrieved later.
+
+![Users](docs/users.gif)
+
 
