@@ -19,6 +19,28 @@ export default function EditAssistantPage() {
   const [vectorStatus, setVectorStatus] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  const deleteVectorFile = async (fileId: string) => {
+    if (!id) return;
+    if (!confirm('Remove this file from the vector store?')) {
+      return;
+    }
+    try {
+      const res = await fetch(
+        `/api/assistants/${id}/vector-store/files/${fileId}/`,
+        {
+          method: 'DELETE',
+        },
+      );
+      if (!res.ok) {
+        const msg = await res.text();
+        throw new Error(msg || res.statusText);
+      }
+      setVectorFiles((list) => list.filter((f) => f.id !== fileId));
+    } catch (err: any) {
+      setVectorStatus(`Error: ${err.message}`);
+    }
+  };
+
   const fetchAssistant = async () => {
     try {
       const res = await fetch(`/api/assistants/${id}/`);
@@ -178,7 +200,16 @@ export default function EditAssistantPage() {
             <p className="font-semibold">Vector store files</p>
             <ul className="list-disc list-inside space-y-1">
               {vectorFiles.map((vf) => (
-                <li key={vf.id}>{vf.filename}</li>
+                <li key={vf.id} className="flex items-center justify-between">
+                  <span>{vf.filename}</span>
+                  <button
+                    type="button"
+                    className="ml-2 text-red-600 px-2 py-1 rounded focus:outline focus:outline-2 focus:outline-accent"
+                    onClick={() => void deleteVectorFile(vf.id)}
+                  >
+                    Remove
+                  </button>
+                </li>
               ))}
             </ul>
           </div>
