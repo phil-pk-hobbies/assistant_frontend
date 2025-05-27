@@ -43,29 +43,6 @@ export default function EditAssistantPage() {
     }
   };
 
-  const fetchAssistant = async () => {
-    try {
-      const { data } = await api.get(`/api/assistants/${id}/`);
-      setName(data.name || '');
-      setDescription(data.description || '');
-      setInstructions(data.instructions || '');
-      setModel(data.model || '');
-      if (Array.isArray(data.tools)) {
-        setFileSearch(
-          data.tools.some((t: any) =>
-            typeof t === 'string'
-              ? t === 'file_search'
-              : t && t.type === 'file_search'
-          )
-        );
-      }
-      if (Array.isArray(data.files)) {
-        setExistingFiles(data.files);
-      }
-    } catch {
-      // ignore errors
-    }
-  };
 
   useEffect(() => {
     if (assistant) {
