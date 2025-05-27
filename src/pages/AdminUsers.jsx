@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from '../lib/form';
+import Button from '../components/Button';
+import Input from '../components/Input';
 import { useUsers, useCreateUser, useToggleActive, useResetPassword } from '../hooks/useUsers';
 import { useDepartments } from '../hooks/useDepartments';
 
@@ -36,27 +38,27 @@ export default function AdminUsers() {
   return (
     <div className="p-4 space-y-4">
       <h1 className="text-xl font-bold">Users</h1>
-      <button className="bg-accent text-white px-3 py-1 rounded" onClick={() => setAdding(true)}>Add User</button>
+      <Button onClick={() => setAdding(true)}>Add User</Button>
       {adding && (
         <dialog open className="border p-4 rounded">
           <form onSubmit={addForm.handleSubmit(submitAdd)} className="space-y-2">
-            <input placeholder="Username" className="border p-1 w-full" {...addForm.register('username', { required: true })} />
-            <input placeholder="First name" className="border p-1 w-full" {...addForm.register('first_name')} />
-            <input placeholder="Last name" className="border p-1 w-full" {...addForm.register('last_name')} />
-            <select className="border p-1 w-full" {...addForm.register('department')}>
+            <Input placeholder="Username" className="w-full" {...addForm.register('username', { required: true })} />
+            <Input placeholder="First name" className="w-full" {...addForm.register('first_name')} />
+            <Input placeholder="Last name" className="w-full" {...addForm.register('last_name')} />
+            <select className="border border-neutral3 p-2 rounded w-full" {...addForm.register('department')}>
               <option value="">--</option>
               {departments?.map((d) => (
                 <option key={d.id} value={d.id}>{d.name}</option>
               ))}
             </select>
-            <input type="password" placeholder="Password" className="border p-1 w-full" {...addForm.register('password', { minLength: 8 })} />
-            <input type="password" placeholder="Confirm" className="border p-1 w-full" {...addForm.register('password2')} />
+            <Input type="password" placeholder="Password" className="w-full" {...addForm.register('password', { minLength: 8 })} />
+            <Input type="password" placeholder="Confirm" className="w-full" {...addForm.register('password2')} />
             <label className="flex items-center gap-1">
               <input type="checkbox" {...addForm.register('is_active')} /> Active
             </label>
             <div className="space-x-2">
-              <button type="submit" className="bg-accent text-white px-3 py-1 rounded">Save</button>
-              <button type="button" onClick={() => { setAdding(false); }}>Cancel</button>
+              <Button type="submit">Save</Button>
+              <Button type="button" onClick={() => { setAdding(false); }} className="bg-secondary text-white">Cancel</Button>
             </div>
           </form>
         </dialog>
@@ -85,12 +87,12 @@ export default function AdminUsers() {
                 />
               </td>
               <td className="p-1">
-                <button
+                <Button
                   onClick={() => resetPassword.mutate({ id: u.id })}
-                  className="underline text-accentBlue"
+                  className="underline bg-transparent text-primary px-1"
                 >
                   Reset Pwd
-                </button>
+                </Button>
               </td>
             </tr>
           ))}
