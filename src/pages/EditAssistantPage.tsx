@@ -155,45 +155,57 @@ export default function EditAssistantPage() {
       </button>
       <h1 className="text-xl font-bold">Edit Assistant</h1>
       <div className="space-y-2">
-        <input
-          className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Name"
-        />
-        <textarea
-          className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Description"
-        />
-        <textarea
-          className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
-          value={instructions}
-          onChange={(e) => setInstructions(e.target.value)}
-          placeholder="Instructions"
-        />
-        <select
-          className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
-          value={model}
-          onChange={(e) => setModel(e.target.value)}
-        >
-          <option value="">Select Model</option>
-          {MODEL_OPTIONS.map((m) => (
-            <option key={m} value={m}>
-              {m}
-            </option>
-          ))}
-        </select>
-        <label className="flex items-center space-x-2">
+        <div className="space-y-1">
+          <span>Name</span>
+          <input
+            className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Name"
+          />
+        </div>
+        <div className="space-y-1">
+          <span>Description</span>
+          <textarea
+            className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Description"
+          />
+        </div>
+        <div className="space-y-1">
+          <span>Instructions</span>
+          <textarea
+            className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
+            value={instructions}
+            onChange={(e) => setInstructions(e.target.value)}
+            placeholder="Instructions"
+          />
+        </div>
+        <div className="space-y-1">
+          <span>Model</span>
+          <select
+            className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
+            value={model}
+            onChange={(e) => setModel(e.target.value)}
+          >
+            <option value="">Select Model</option>
+            {MODEL_OPTIONS.map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex items-center space-x-2">
           <input
             type="checkbox"
             checked={fileSearch}
             onChange={(e) => setFileSearch(e.target.checked)}
           />
           <span>Enable file search</span>
-        </label>
+        </div>
         {vectorStatus && <p>{vectorStatus}</p>}
         {vectorFiles.length > 0 && (
           <div className="space-y-1">
@@ -218,7 +230,7 @@ export default function EditAssistantPage() {
           <div className="space-y-1">
             <p className="font-semibold">Remove files</p>
             {existingFiles.map((f) => (
-              <label key={f.id} className="flex items-center space-x-2">
+              <div key={f.id} className="flex items-center space-x-2">
                 <input
                   type="checkbox"
                   checked={removeFiles.has(f.id)}
@@ -235,27 +247,29 @@ export default function EditAssistantPage() {
                   }}
                 />
                 <span>{f.name}</span>
-              </label>
+              </div>
             ))}
           </div>
         )}
 
         {newFiles.map((f) => (
           <div key={f.id} className="flex items-center space-x-2">
-            <input
-              className="border p-2 flex-1 rounded-lg focus:outline focus:outline-2 focus:outline-accent"
-              type="file"
-              onChange={(e) =>
-
-                setNewFiles((cur) =>
-                  cur.map((obj) =>
-                    obj.id === f.id
-                      ? { ...obj, file: e.target.files?.[0] ?? null }
-                      : obj,
-                  ),
-                )
-              }
-            />
+            <div className="flex-1 space-y-1">
+              <span>File</span>
+              <input
+                className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
+                type="file"
+                onChange={(e) =>
+                  setNewFiles((cur) =>
+                    cur.map((obj) =>
+                      obj.id === f.id
+                        ? { ...obj, file: e.target.files?.[0] ?? null }
+                        : obj,
+                    ),
+                  )
+                }
+              />
+            </div>
             <button
               type="button"
               className="text-red-600 text-xl leading-none px-2 focus:outline focus:outline-2 focus:outline-accent"
