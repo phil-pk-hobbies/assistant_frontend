@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import Button from './ui/Button';
 import Input from './ui/Input';
 import Select from './ui/Select';
+import Icon from './ui/Icon';
 import {
   useAssistantUserShares,
   useAssistantDeptShares,
@@ -120,7 +121,15 @@ export default function ShareAssistantModal({ id, open, onClose, owner }) {
         <div className="flex gap-2 mb-4">
           <Button size="sm" variant={tab==='users'?'primary':'secondary'} onClick={()=>setTab('users')}>Users</Button>
           <Button size="sm" variant={tab==='depts'?'primary':'secondary'} onClick={()=>setTab('depts')}>Departments</Button>
-          <Button size="sm" variant="ghost" className="ml-auto" onClick={onClose}>✖️</Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="ml-auto"
+            onClick={onClose}
+            aria-label="Close"
+          >
+            <Icon name="X" size="sm" />
+          </Button>
         </div>
         {tab==='users' && (
           <div className="space-y-2">
@@ -136,7 +145,13 @@ export default function ShareAssistantModal({ id, open, onClose, owner }) {
                       </Select>
                     </td>
                     <td>
-                      <Button variant="ghost" aria-label={`remove ${u.name}`} onClick={()=>removeUser(u.id)}>🗑</Button>
+                      <Button
+                        variant="ghost"
+                        aria-label={`remove ${u.name}`}
+                        onClick={() => removeUser(u.id)}
+                      >
+                        <Icon name="Trash2" size="sm" />
+                      </Button>
                     </td>
                   </tr>
                 ))}
@@ -193,7 +208,13 @@ export default function ShareAssistantModal({ id, open, onClose, owner }) {
                       </Select>
                     </td>
                     <td>
-                      <Button variant="ghost" aria-label={`remove ${d.name}`} onClick={()=>removeDept(d.id)}>🗑</Button>
+                      <Button
+                        variant="ghost"
+                        aria-label={`remove ${d.name}`}
+                        onClick={() => removeDept(d.id)}
+                      >
+                        <Icon name="Trash2" size="sm" />
+                      </Button>
                     </td>
                   </tr>
                 ))}

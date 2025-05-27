@@ -46,6 +46,10 @@ export default tseslint.config(
           selector: "JSXOpeningElement[name.name='input'] JSXAttribute[name.name='className']",
           message: 'Use <Input/> from DS',
         },
+        {
+          selector: "JSXOpeningElement[name.name='svg']",
+          message: 'Use <Icon/> from DS',
+        },
       ],
     },
   },

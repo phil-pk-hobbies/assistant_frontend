@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import PermissionBadge from './PermissionBadge';
 import Button from './ui/Button';
+import Icon from './ui/Icon';
 import type { Assistant } from '../pages/HomePage';
 
 interface Props {
@@ -37,7 +38,7 @@ export default function AssistantCard({ assistant, onDelete }: Props) {
                 navigate(`/assistants/${assistant.id}/edit`);
               }}
             >
-              ✏️
+              <Icon name="Pencil" size="sm" />
             </Button>
             <Button
               aria-label="Delete"
@@ -48,7 +49,7 @@ export default function AssistantCard({ assistant, onDelete }: Props) {
                 onDelete && onDelete(assistant.id);
               }}
             >
-              🗑
+              <Icon name="Trash2" size="sm" />
             </Button>
           </div>
         )}
