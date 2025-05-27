@@ -7,6 +7,9 @@ import ChatPage from './pages/ChatPage';
 import VectorStoreFilesPage from './pages/VectorStoreFilesPage';
 import LoginPage from './pages/LoginPage';
 import ProtectedRoute from './routes/ProtectedRoute';
+import RequireAdmin from './routes/RequireAdmin';
+import AdminUsers from './pages/AdminUsers';
+import AdminDepartments from './pages/AdminDepartments.jsx';
 
 export default function App() {
   return (
@@ -19,6 +22,10 @@ export default function App() {
         <Route path="/assistants/:id/edit" element={<EditAssistantPage />} />
         <Route path="/assistants/:id" element={<ChatPage />} />
         <Route path="/assistants/:id/vector-store" element={<VectorStoreFilesPage />} />
+        <Route element={<RequireAdmin />}>
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/departments" element={<AdminDepartments />} />
+        </Route>
       </Route>
     </Routes>
   );
