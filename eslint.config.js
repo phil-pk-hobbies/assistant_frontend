@@ -23,6 +23,14 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
+      'no-restricted-syntax': [
+        'warn',
+        {
+          selector:
+            "CallExpression[callee.object.name='localStorage'][callee.property.name='setItem'][arguments.0.value='access']",
+          message: 'Do not store access token in localStorage',
+        },
+      ],
     },
   },
 )

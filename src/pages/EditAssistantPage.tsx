@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import api from '../api/axios';
 
 const MODEL_OPTIONS = ['gpt-4', 'gpt-4o', 'o3-mini'];
 
@@ -25,16 +26,7 @@ export default function EditAssistantPage() {
       return;
     }
     try {
-      const res = await fetch(
-        `/api/assistants/${id}/vector-store/files/${fileId}/`,
-        {
-          method: 'DELETE',
-        },
-      );
-      if (!res.ok) {
-        const msg = await res.text();
-        throw new Error(msg || res.statusText);
-      }
+      await api.delete(`/api/assistants/${id}/vector-store/files/${fileId}/`);
       setVectorFiles((list) => list.filter((f) => f.id !== fileId));
     } catch (err: any) {
       setVectorStatus(`Error: ${err.message}`);
@@ -43,25 +35,22 @@ export default function EditAssistantPage() {
 
   const fetchAssistant = async () => {
     try {
-      const res = await fetch(`/api/assistants/${id}/`);
-      if (res.ok) {
-        const data = await res.json();
-        setName(data.name || '');
-        setDescription(data.description || '');
-        setInstructions(data.instructions || '');
-        setModel(data.model || '');
-        if (Array.isArray(data.tools)) {
-          setFileSearch(
-            data.tools.some((t: any) =>
-              typeof t === 'string'
-                ? t === 'file_search'
-                : t && t.type === 'file_search'
-            )
-          );
-        }
-        if (Array.isArray(data.files)) {
-          setExistingFiles(data.files);
-        }
+      const { data } = await api.get(`/api/assistants/${id}/`);
+      setName(data.name || '');
+      setDescription(data.description || '');
+      setInstructions(data.instructions || '');
+      setModel(data.model || '');
+      if (Array.isArray(data.tools)) {
+        setFileSearch(
+          data.tools.some((t: any) =>
+            typeof t === 'string'
+              ? t === 'file_search'
+              : t && t.type === 'file_search'
+          )
+        );
+      }
+      if (Array.isArray(data.files)) {
+        setExistingFiles(data.files);
       }
     } catch {
       // ignore errors
@@ -73,9 +62,8 @@ export default function EditAssistantPage() {
     const fetchVectorFiles = async () => {
       if (!id) return;
       try {
-        const res = await fetch(`/api/assistants/${id}/vector-store/files/`);
-        if (res.ok) {
-          const data = await res.json();
+        const res = await api.get(`/api/assistants/${id}/vector-store/files/`);
+        const data = res.data;
           const items = Array.isArray(data)
             ? data.map((f: any) => ({
                 ...f,
@@ -89,15 +77,12 @@ export default function EditAssistantPage() {
               }))
             : [];
           setVectorFiles(items);
-        } else if (res.status === 404) {
-          const msg = await res.text();
-          setVectorStatus(msg || 'No vector store for this assistant.');
-        } else {
-          const msg = await res.text();
-          throw new Error(msg || res.statusText);
-        }
       } catch (err: any) {
-        setVectorStatus(`Error: ${err.message}`);
+        if (err.response?.status === 404) {
+          setVectorStatus(err.response.data || 'No vector store for this assistant.');
+        } else {
+          setVectorStatus(`Error: ${err.message}`);
+        }
       }
     };
 
@@ -129,15 +114,8 @@ export default function EditAssistantPage() {
       });
       removeFiles.forEach((id) => form.append('remove_files', id));
 
-      const res = await fetch(`/api/assistants/${id}/`, {
-        method: 'PATCH',
-        body: form,
-      });
-      if (!res.ok) {
-        const data = await res.text();
-        throw new Error(data || res.statusText);
-      }
-      navigate('/');
+      await api.patch(`/api/assistants/${id}/`, form);
+      navigate('/assistants');
     } catch (err: any) {
       setStatus(`Error: ${err.message}`);
     } finally {

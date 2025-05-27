@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import api from '../api/axios';
 
 interface VectorFile {
   id: string;
@@ -17,10 +18,9 @@ export default function VectorStoreFilesPage() {
     const fetchFiles = async () => {
       if (!id) return;
       try {
-        const res = await fetch(`/api/assistants/${id}/vector-store/files/`);
-        if (res.ok) {
-          const data = await res.json();
-          const items = Array.isArray(data)
+        const res = await api.get(`/api/assistants/${id}/vector-store/files/`);
+        const data = res.data;
+        const items = Array.isArray(data)
             ? data.map((f: any) => ({
                 ...f,
                 // Support older API responses that may not include a filename
@@ -33,16 +33,13 @@ export default function VectorStoreFilesPage() {
                 id: f.id ?? f.file_id,
               }))
             : [];
-          setFiles(items);
-        } else if (res.status === 404) {
-          const msg = await res.text();
-          setStatus(msg || 'No vector store for this assistant.');
-        } else {
-          const msg = await res.text();
-          throw new Error(msg || res.statusText);
-        }
+        setFiles(items);
       } catch (err: any) {
-        setStatus(`Error: ${err.message}`);
+        if (err.response?.status === 404) {
+          setStatus(err.response.data || 'No vector store for this assistant.');
+        } else {
+          setStatus(`Error: ${err.message}`);
+        }
       }
     };
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import api from '../api/axios';
 import type { Assistant } from './HomePage';
 import Markdown from '../components/Markdown';
 
@@ -22,11 +23,8 @@ export default function ChatPage() {
 
   const fetchAssistant = async () => {
     try {
-      const res = await fetch(`/api/assistants/${id}/`);
-      if (res.ok) {
-        const data = await res.json();
-        setAssistant(data);
-      }
+      const { data } = await api.get(`/api/assistants/${id}/`);
+      setAssistant(data);
     } catch {
       // ignore errors
     }
@@ -37,11 +35,8 @@ export default function ChatPage() {
       // The backend exposes messages through the read-only `/api/messages/`
       // endpoint. Filter by assistant id to retrieve the history for the
       // current assistant.
-      const res = await fetch(`/api/messages/?assistant=${id}`);
-      if (res.ok) {
-        const data = await res.json();
-        setMessages(data);
-      }
+      const res = await api.get(`/api/messages/?assistant=${id}`);
+      setMessages(res.data);
     } catch {
       // ignore
     }
@@ -65,13 +60,7 @@ export default function ChatPage() {
     }
     setStatus(null);
     try {
-      const res = await fetch(`/api/assistants/${id}/reset/`, {
-        method: 'POST',
-      });
-      if (!res.ok) {
-        const data = await res.text();
-        throw new Error(data || res.statusText);
-      }
+      await api.post(`/api/assistants/${id}/reset/`);
       setMessages([]);
     } catch (err: any) {
       setStatus(`Error: ${err.message}`);
@@ -92,18 +81,9 @@ export default function ChatPage() {
       ]);
       setWaiting(true);
 
-      const res = await fetch(`/api/assistants/${id}/chat/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content }),
+      const { data: reply } = await api.post(`/api/assistants/${id}/chat/`, {
+        content,
       });
-
-      if (!res.ok) {
-        const data = await res.text();
-        throw new Error(data || res.statusText);
-      }
-
-      const reply = await res.json();
       setMessages((msgs) => [...msgs, reply]);
     } catch (err: any) {
       setStatus(`Error: ${err.message}`);
