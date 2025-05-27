@@ -23,6 +23,7 @@ export default function ShareAssistantModal({ id, open, onClose, owner }) {
   const { data: departments = [] } = useDepartments();
   const [perm, setPerm] = useState('use');
   const [selUser, setSelUser] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [selDept, setSelDept] = useState('');
   const [status, setStatus] = useState(null);
   const qc = useQueryClient();
@@ -31,6 +32,7 @@ export default function ShareAssistantModal({ id, open, onClose, owner }) {
     if (!open) {
       setSearchInput('');
       setSelUser('');
+      setShowSuggestions(false);
       setSelDept('');
       setPerm('use');
       setStatus(null);
@@ -46,6 +48,7 @@ export default function ShareAssistantModal({ id, open, onClose, owner }) {
       qc.invalidateQueries(['assistant', 'shares', id, 'users']);
       qc.invalidateQueries(['assistants']);
       setSelUser('');
+      setSearchInput('');
       setStatus('Access granted');
     } catch (err) {
       setStatus(err.response?.data || 'Error');
@@ -136,22 +139,34 @@ export default function ShareAssistantModal({ id, open, onClose, owner }) {
                 ))}
               </tbody>
             </table>
-            <div className="flex gap-2 items-center mt-2">
-              <input
-                value={searchInput}
-                onChange={e => setSearchInput(e.target.value)}
-                placeholder="Search users"
-                className="border p-1 flex-grow"
-                aria-label="Search users"
-              />
-              <select value={selUser} onChange={e=>setSelUser(e.target.value)} className="border p-1">
-                <option value="">Select</option>
-                {users.filter(u=>!userShares.some(s=>s.id===u.id)).map(u=> (
-                  <option key={u.id} value={u.id}>
-                    {u.username} - {u.first_name} {u.last_name} ({u.department_name})
-                  </option>
-                ))}
-              </select>
+            <div className="flex gap-2 items-start mt-2">
+              <div className="relative flex-grow">
+                <input
+                  value={searchInput}
+                  onChange={e => { setSearchInput(e.target.value); setSelUser(''); setShowSuggestions(true); }}
+                  onFocus={() => searchInput && setShowSuggestions(true)}
+                  onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
+                  placeholder="Search users"
+                  className="border p-1 w-full"
+                  aria-label="Search users"
+                />
+                {showSuggestions && searchInput && (
+                  <ul className="absolute left-0 right-0 mt-1 border bg-white max-h-40 overflow-y-auto z-10 text-sm">
+                    {users.filter(u=>!userShares.some(s=>s.id===u.id)).map(u=> (
+                      <li key={u.id}>
+                        <button
+                          type="button"
+                          className="block w-full text-left px-2 py-1 hover:bg-grey90"
+                          onMouseDown={e=>e.preventDefault()}
+                          onClick={() => { setSelUser(u.id); setSearchInput(`${u.username} - ${u.first_name} ${u.last_name} (${u.department_name})`); setShowSuggestions(false); }}
+                        >
+                          {u.username} - {u.first_name} {u.last_name} ({u.department_name})
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
               <select value={perm} onChange={e=>setPerm(e.target.value)} className="border p-1">
                 <option value="use">Use</option>
                 <option value="edit">Edit</option>
