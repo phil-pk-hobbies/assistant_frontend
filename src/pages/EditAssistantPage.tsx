@@ -98,7 +98,7 @@ export default function EditAssistantPage() {
         form.append('tools', 'file_search');
       } else {
         // clear existing tools by sending an empty value
-        form.append('tools', '');
+        form.append('tools', '[]');
       }
       newFiles.forEach((f) => form.append('files', f));
       removeFiles.forEach((id) => form.append('remove_files', id));
