@@ -54,7 +54,19 @@ export default function EditAssistantPage() {
         const res = await fetch(`/api/assistants/${id}/vector-store/files/`);
         if (res.ok) {
           const data = await res.json();
-          setVectorFiles(data);
+          const items = Array.isArray(data)
+            ? data.map((f: any) => ({
+                ...f,
+                filename:
+                  f.filename ??
+                  f.name ??
+                  f.file_name ??
+                  f.file_id ??
+                  '',
+                id: f.id ?? f.file_id,
+              }))
+            : [];
+          setVectorFiles(items);
         } else if (res.status === 404) {
           const msg = await res.text();
           setVectorStatus(msg || 'No vector store for this assistant.');

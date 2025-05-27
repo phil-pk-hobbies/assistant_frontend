@@ -20,7 +20,20 @@ export default function VectorStoreFilesPage() {
         const res = await fetch(`/api/assistants/${id}/vector-store/files/`);
         if (res.ok) {
           const data = await res.json();
-          setFiles(data);
+          const items = Array.isArray(data)
+            ? data.map((f: any) => ({
+                ...f,
+                // Support older API responses that may not include a filename
+                filename:
+                  f.filename ??
+                  f.name ??
+                  f.file_name ??
+                  f.file_id ??
+                  '',
+                id: f.id ?? f.file_id,
+              }))
+            : [];
+          setFiles(items);
         } else if (res.status === 404) {
           const msg = await res.text();
           setStatus(msg || 'No vector store for this assistant.');
