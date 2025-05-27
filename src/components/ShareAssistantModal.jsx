@@ -10,14 +10,16 @@ import {
   removeDeptShare,
 } from '../hooks/useAssistantShares';
 import { useUsersSearch } from '../hooks/useUsersSearch';
+import useDebounce from '../hooks/useDebounce';
 import { useDepartments } from '../hooks/useDepartments';
 
 export default function ShareAssistantModal({ id, open, onClose, owner }) {
   const { data: userShares = [] } = useAssistantUserShares(id, { enabled: open && owner });
   const { data: deptShares = [] } = useAssistantDeptShares(id, { enabled: open && owner });
   const [tab, setTab] = useState('users');
-  const [search, setSearch] = useState('');
-  const { data: users = [] } = useUsersSearch(search);
+  const [searchInput, setSearchInput] = useState('');
+  const debounced = useDebounce(searchInput, 300);
+  const { data: users = [] } = useUsersSearch(debounced);
   const { data: departments = [] } = useDepartments();
   const [perm, setPerm] = useState('use');
   const [selUser, setSelUser] = useState('');
@@ -27,7 +29,7 @@ export default function ShareAssistantModal({ id, open, onClose, owner }) {
 
   useEffect(() => {
     if (!open) {
-      setSearch('');
+      setSearchInput('');
       setSelUser('');
       setSelDept('');
       setPerm('use');
@@ -135,11 +137,19 @@ export default function ShareAssistantModal({ id, open, onClose, owner }) {
               </tbody>
             </table>
             <div className="flex gap-2 items-center mt-2">
-              <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search users" className="border p-1 flex-grow" />
+              <input
+                value={searchInput}
+                onChange={e => setSearchInput(e.target.value)}
+                placeholder="Search users"
+                className="border p-1 flex-grow"
+                aria-label="Search users"
+              />
               <select value={selUser} onChange={e=>setSelUser(e.target.value)} className="border p-1">
                 <option value="">Select</option>
                 {users.filter(u=>!userShares.some(s=>s.id===u.id)).map(u=> (
-                  <option key={u.id} value={u.id}>{u.name}</option>
+                  <option key={u.id} value={u.id}>
+                    {u.username} - {u.first_name} {u.last_name} ({u.department_name})
+                  </option>
                 ))}
               </select>
               <select value={perm} onChange={e=>setPerm(e.target.value)} className="border p-1">
