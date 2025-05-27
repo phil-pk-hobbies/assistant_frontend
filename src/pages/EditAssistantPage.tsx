@@ -242,7 +242,6 @@ export default function EditAssistantPage() {
 
         {newFiles.map((f) => (
           <div key={f.id} className="flex items-center space-x-2">
-main
             <input
               className="border p-2 flex-1 rounded-lg focus:outline focus:outline-2 focus:outline-accent"
               type="file"
@@ -266,7 +265,7 @@ main
             >
               &times;
             </button>
-main
+            Remove
           </div>
         ))}
         {newFiles.length < 20 && (

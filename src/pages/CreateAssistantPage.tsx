@@ -129,7 +129,7 @@ export default function CreateAssistantPage() {
             >
               &times;
             </button>
-main
+            Remove
           </div>
         ))}
         {files.length < 20 && (
