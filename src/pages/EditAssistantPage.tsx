@@ -13,7 +13,7 @@ export default function EditAssistantPage() {
   const [status, setStatus] = useState<string | null>(null);
   const [waiting, setWaiting] = useState(false);
   const [existingFiles, setExistingFiles] = useState<{ id: string; name: string }[]>([]);
-  const [newFiles, setNewFiles] = useState<(File | null)[]>([]);
+  const [newFiles, setNewFiles] = useState<{ id: string; file: File | null }[]>([]);
   const [removeFiles, setRemoveFiles] = useState<Set<string>>(new Set());
   const [vectorFiles, setVectorFiles] = useState<{ id: string; filename: string }[]>([]);
   const [vectorStatus, setVectorStatus] = useState<string | null>(null);
@@ -122,9 +122,9 @@ export default function EditAssistantPage() {
         // clear existing tools by sending an empty value
         form.append('tools', '[]');
       }
-      newFiles.forEach((f) => {
-        if (f) {
-          form.append('files', f);
+      newFiles.forEach(({ file }) => {
+        if (file) {
+          form.append('files', file);
         }
       });
       removeFiles.forEach((id) => form.append('remove_files', id));
@@ -239,25 +239,42 @@ export default function EditAssistantPage() {
             ))}
           </div>
         )}
-        {newFiles.map((_, i) => (
-          <input
-            key={i}
-            className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
-            type="file"
-            onChange={(e) =>
-              setNewFiles((cur) => {
-                const next = [...cur];
-                next[i] = e.target.files?.[0] ?? null;
-                return next;
-              })
-            }
-          />
+        {newFiles.map((f) => (
+          <div key={f.id} className="flex items-center space-x-2">
+            <input
+              className="border p-2 flex-1 rounded-lg focus:outline focus:outline-2 focus:outline-accent"
+              type="file"
+              onChange={(e) =>
+                setNewFiles((cur) =>
+                  cur.map((obj) =>
+                    obj.id === f.id
+                      ? { ...obj, file: e.target.files?.[0] ?? null }
+                      : obj,
+                  ),
+                )
+              }
+            />
+            <button
+              type="button"
+              className="text-red-600 text-xl leading-none px-2 focus:outline focus:outline-2 focus:outline-accent"
+              onClick={() =>
+                setNewFiles((cur) => cur.filter((obj) => obj.id !== f.id))
+              }
+            >
+              &times;
+            </button>
+          </div>
         ))}
         {newFiles.length < 20 && (
           <button
             type="button"
             className="bg-gray-200 text-gray-700 px-2 py-1 rounded"
-            onClick={() => setNewFiles((cur) => [...cur, null])}
+            onClick={() =>
+              setNewFiles((cur) => [
+                ...cur,
+                { id: crypto.randomUUID(), file: null },
+              ])
+            }
           >
             Add File
           </button>

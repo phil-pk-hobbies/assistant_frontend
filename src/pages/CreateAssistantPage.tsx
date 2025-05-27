@@ -9,7 +9,9 @@ export default function CreateAssistantPage() {
   const [instructions, setInstructions] = useState('');
   const [fileSearch, setFileSearch] = useState(false);
   const [model, setModel] = useState('');
-  const [files, setFiles] = useState<(File | null)[]>([null]);
+  const [files, setFiles] = useState<{ id: string; file: File | null }[]>([
+    { id: crypto.randomUUID(), file: null },
+  ]);
   const [status, setStatus] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const navigate = useNavigate();
@@ -28,9 +30,9 @@ export default function CreateAssistantPage() {
       if (fileSearch) {
         form.append('tools', 'file_search');
       }
-      files.forEach((f) => {
-        if (f) {
-          form.append('files', f);
+      files.forEach(({ file }) => {
+        if (file) {
+          form.append('files', file);
         }
       });
 
@@ -100,25 +102,42 @@ export default function CreateAssistantPage() {
           />
           <span>Enable file search</span>
         </label>
-        {files.map((_, i) => (
-          <input
-            key={i}
-            className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
-            type="file"
-            onChange={(e) =>
-              setFiles((cur) => {
-                const next = [...cur];
-                next[i] = e.target.files?.[0] ?? null;
-                return next;
-              })
-            }
-          />
+        {files.map((f) => (
+          <div key={f.id} className="flex items-center space-x-2">
+            <input
+              className="border p-2 flex-1 rounded-lg focus:outline focus:outline-2 focus:outline-accent"
+              type="file"
+              onChange={(e) =>
+                setFiles((cur) =>
+                  cur.map((obj) =>
+                    obj.id === f.id
+                      ? { ...obj, file: e.target.files?.[0] ?? null }
+                      : obj,
+                  ),
+                )
+              }
+            />
+            <button
+              type="button"
+              className="text-red-600 text-xl leading-none px-2 focus:outline focus:outline-2 focus:outline-accent"
+              onClick={() =>
+                setFiles((cur) => cur.filter((obj) => obj.id !== f.id))
+              }
+            >
+              &times;
+            </button>
+          </div>
         ))}
         {files.length < 20 && (
           <button
             type="button"
             className="bg-gray-200 text-gray-700 px-2 py-1 rounded"
-            onClick={() => setFiles((cur) => [...cur, null])}
+            onClick={() =>
+              setFiles((cur) => [
+                ...cur,
+                { id: crypto.randomUUID(), file: null },
+              ])
+            }
           >
             Add File
           </button>
