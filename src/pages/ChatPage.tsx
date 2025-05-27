@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import api from '../api/axios';
+import Button from '../components/ui/Button';
+import TextArea from '../components/ui/TextArea';
 import type { Assistant } from './HomePage';
 import { useAssistant, NotAllowedError } from '../hooks/useAssistant';
 import Markdown from '../components/Markdown';
@@ -103,33 +105,20 @@ export default function ChatPage() {
   return (
     <div className="p-4 space-y-4 flex flex-col h-screen w-full mx-auto">
       <div className="flex space-x-2">
-        <button
-          className="bg-gray-200 text-gray-700 px-3 py-1 rounded"
-          onClick={() => navigate(-1)}
-        >
+        <Button variant="secondary" size="sm" onClick={() => navigate(-1)}>
           Back
-        </button>
-        <button
-          className="bg-gray-200 text-gray-700 px-3 py-1 rounded"
-          onClick={() => navigate(`/assistants/${id}/vector-store`)}
-        >
+        </Button>
+        <Button variant="secondary" size="sm" onClick={() => navigate(`/assistants/${id}/vector-store`)}>
           Files
-        </button>
+        </Button>
         {assistant?.owner && (
-          <button
-            className="bg-gray-200 text-gray-700 px-3 py-1 rounded"
-            onClick={() => setShowShare(true)}
-          >
+          <Button variant="secondary" size="sm" onClick={() => setShowShare(true)}>
             Share
-          </button>
+          </Button>
         )}
-        <button
-          className="bg-red-500 text-white px-3 py-1 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={waiting}
-          onClick={clearChat}
-        >
+        <Button variant="danger" size="sm" disabled={waiting} onClick={clearChat}>
           Clear Chat
-        </button>
+        </Button>
       </div>
       <h1 className="text-xl font-bold">
         Chat with {assistant ? assistant.name : id}
@@ -165,10 +154,10 @@ export default function ChatPage() {
         )}
       </div>
       <div className="flex space-x-2">
-        <textarea
+        <TextArea
           ref={inputRef}
           rows={1}
-          className="border p-2 flex-grow resize-none overflow-hidden"
+          className="flex-grow resize-none overflow-hidden"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onInput={() => {
@@ -186,13 +175,9 @@ export default function ChatPage() {
           }}
           placeholder="Type a message"
         />
-        <button
-          className="bg-accent text-white px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={waiting}
-          onClick={sendMessage}
-        >
+        <Button disabled={waiting} onClick={sendMessage}>
           Send
-        </button>
+        </Button>
       </div>
       {status && <p>{status}</p>}
       <ShareAssistantModal

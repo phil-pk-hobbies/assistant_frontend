@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useForm } from '../lib/form';
-import Button from '../components/Button';
-import Input from '../components/Input';
+import Button from '../components/ui/Button';
+import Input from '../components/ui/Input';
+import Select from '../components/ui/Select';
 import { useUsers, useCreateUser, useToggleActive, useResetPassword } from '../hooks/useUsers';
 import { useDepartments } from '../hooks/useDepartments';
 
@@ -45,12 +46,12 @@ export default function AdminUsers() {
             <Input placeholder="Username" className="w-full" {...addForm.register('username', { required: true })} />
             <Input placeholder="First name" className="w-full" {...addForm.register('first_name')} />
             <Input placeholder="Last name" className="w-full" {...addForm.register('last_name')} />
-            <select className="border border-neutral3 p-2 rounded w-full" {...addForm.register('department')}>
+            <Select className="w-full" {...addForm.register('department')}>
               <option value="">--</option>
               {departments?.map((d) => (
                 <option key={d.id} value={d.id}>{d.name}</option>
               ))}
-            </select>
+            </Select>
             <Input type="password" placeholder="Password" className="w-full" {...addForm.register('password', { minLength: 8 })} />
             <Input type="password" placeholder="Confirm" className="w-full" {...addForm.register('password2')} />
             <label className="flex items-center gap-1">
@@ -58,7 +59,7 @@ export default function AdminUsers() {
             </label>
             <div className="space-x-2">
               <Button type="submit">Save</Button>
-              <Button type="button" onClick={() => { setAdding(false); }} className="bg-secondary text-white">Cancel</Button>
+              <Button type="button" variant="secondary" onClick={() => { setAdding(false); }}>Cancel</Button>
             </div>
           </form>
         </dialog>
@@ -89,7 +90,8 @@ export default function AdminUsers() {
               <td className="p-1">
                 <Button
                   onClick={() => resetPassword.mutate({ id: u.id })}
-                  className="underline bg-transparent text-primary px-1"
+                  variant="ghost"
+                  className="underline px-1"
                 >
                   Reset Pwd
                 </Button>

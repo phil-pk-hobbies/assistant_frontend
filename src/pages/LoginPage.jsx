@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Button from '../components/ui/Button';
+import Input from '../components/ui/Input';
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -29,8 +31,8 @@ export default function LoginPage() {
         <div className="space-y-1">
           <label className="block">
             Username
-            <input
-              className="border p-2 w-full rounded focus:outline focus:outline-2 focus:outline-accent"
+            <Input
+              className="w-full"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -40,17 +42,15 @@ export default function LoginPage() {
         <div className="space-y-1">
           <label className="block">
             Password
-            <input
-              className="border p-2 w-full rounded focus:outline focus:outline-2 focus:outline-accent"
+            <Input
+              className="w-full"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </label>
         </div>
-        <button className="bg-accent text-white px-4 py-2 rounded" type="submit">
-          Login
-        </button>
+        <Button type="submit">Login</Button>
         {error && <p className="text-red-600">{error}</p>}
       </form>
     </div>

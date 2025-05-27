@@ -33,4 +33,20 @@ export default tseslint.config(
       ],
     },
   },
+  {
+    files: ['src/**/*.{ts,tsx,jsx,js}', '!src/components/ui/**'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "JSXOpeningElement[name.name='button'] JSXAttribute[name.name='className']",
+          message: 'Use <Button/> from DS',
+        },
+        {
+          selector: "JSXOpeningElement[name.name='input'] JSXAttribute[name.name='className']",
+          message: 'Use <Input/> from DS',
+        },
+      ],
+    },
+  },
 )
