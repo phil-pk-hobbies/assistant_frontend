@@ -24,4 +24,5 @@ dist-ssr
 *.sw?
 # Never commit environment-variable files
 .env
-.env.*   
+.env.*
+!.env.example

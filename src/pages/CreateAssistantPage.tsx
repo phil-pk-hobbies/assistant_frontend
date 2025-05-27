@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../api/axios';
 
 const MODEL_OPTIONS = ['gpt-4', 'gpt-4o', 'o3-mini'];
 
@@ -36,16 +37,9 @@ export default function CreateAssistantPage() {
         }
       });
 
-      const res = await fetch('/api/assistants/', {
-        method: 'POST',
-        body: form,
-      });
-      if (!res.ok) {
-        const data = await res.text();
-        throw new Error(data || res.statusText);
-      }
+      const res = await api.post('/api/assistants/', form);
       setStatus('Assistant created successfully');
-      navigate('/');
+      navigate('/assistants');
     } catch (err: any) {
       setStatus(`Error: ${err.message}`);
     } finally {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../api/axios';
 
 export interface Assistant {
   id: string;
@@ -27,13 +28,7 @@ export default function HomePage() {
       return;
     }
     try {
-      const res = await fetch(`/api/assistants/${id}/`, {
-        method: 'DELETE',
-      });
-      if (!res.ok) {
-        const data = await res.text();
-        throw new Error(data || res.statusText);
-      }
+      await api.delete(`/api/assistants/${id}/`);
       setAssistants((list) => list.filter((a) => a.id !== id));
     } catch (err: any) {
       setStatus(`Error: ${err.message}`);
@@ -42,13 +37,8 @@ export default function HomePage() {
 
   const fetchAssistants = async () => {
     try {
-      const res = await fetch('/api/assistants/');
-      if (!res.ok) {
-        const data = await res.text();
-        throw new Error(data || res.statusText);
-      }
-      const data = await res.json();
-      setAssistants(data);
+      const res = await api.get('/api/assistants/');
+      setAssistants(res.data);
     } catch (err: any) {
       setStatus(`Error: ${err.message}`);
     }
@@ -59,11 +49,8 @@ export default function HomePage() {
       return;
     }
     try {
-      const res = await fetch(`/api/messages/?assistant=${id}`);
-      if (res.ok) {
-        const data = await res.json();
-        setMessagesByAssistant((m) => ({ ...m, [id]: data }));
-      }
+      const res = await api.get(`/api/messages/?assistant=${id}`);
+      setMessagesByAssistant((m) => ({ ...m, [id]: res.data }));
     } catch {
       // ignore errors
     }

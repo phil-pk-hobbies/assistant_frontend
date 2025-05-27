@@ -66,4 +66,16 @@ File uploads are also supported during assistant creation. You may add files ind
 
 Existing assistants can be edited in the UI. When updating you may add new files one at a time (again up to 20) or select existing ones to remove. The form submits a `PATCH` request to `/api/assistants/<uuid>/` including any new `files` and a `remove_files` list containing the file IDs to delete.
 
+## Auth flow
+
+```
+User -> LoginPage -> POST /api/token/ -> AuthProvider stores access in state and refresh in localStorage
+      -> GET /api/users/me/ -> user profile
+App components consume AuthContext
+api requests -> axios instance -> attaches Authorization header
+401 from API -> interceptor POST /api/token/refresh/ -> update context and retry
+```
+
+For production the refresh token should be stored in a secure HttpOnly cookie. This prototype keeps it in `localStorage` for simplicity.
+
 
