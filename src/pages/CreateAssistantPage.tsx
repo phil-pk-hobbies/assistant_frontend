@@ -101,18 +101,30 @@ export default function CreateAssistantPage() {
           <span>Enable file search</span>
         </label>
         {files.map((_, i) => (
-          <input
-            key={i}
-            className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
-            type="file"
-            onChange={(e) =>
-              setFiles((cur) => {
-                const next = [...cur];
-                next[i] = e.target.files?.[0] ?? null;
-                return next;
-              })
-            }
-          />
+          <div key={i} className="flex items-center space-x-2">
+            <input
+              className="border p-2 flex-1 rounded-lg focus:outline focus:outline-2 focus:outline-accent"
+              type="file"
+              onChange={(e) =>
+                setFiles((cur) => {
+                  const next = [...cur];
+                  next[i] = e.target.files?.[0] ?? null;
+                  return next;
+                })
+              }
+            />
+            {files.length > 1 && (
+              <button
+                type="button"
+                className="text-red-600 px-2 py-1 rounded focus:outline focus:outline-2 focus:outline-accent"
+                onClick={() =>
+                  setFiles((cur) => cur.filter((_, idx) => idx !== i))
+                }
+              >
+                Remove
+              </button>
+            )}
+          </div>
         ))}
         {files.length < 20 && (
           <button
