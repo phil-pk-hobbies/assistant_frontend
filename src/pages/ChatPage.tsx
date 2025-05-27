@@ -122,6 +122,12 @@ export default function ChatPage() {
           Back
         </button>
         <button
+          className="bg-gray-200 text-gray-700 px-3 py-1 rounded"
+          onClick={() => navigate(`/assistants/${id}/vector-store`)}
+        >
+          Files
+        </button>
+        <button
           className="bg-red-500 text-white px-3 py-1 rounded disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={waiting}
           onClick={clearChat}
