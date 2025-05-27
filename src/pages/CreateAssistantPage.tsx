@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
+import Button from '../components/Button';
+import Input from '../components/Input';
 
 const MODEL_OPTIONS = ['gpt-4', 'gpt-4o', 'o3-mini'];
 
@@ -49,18 +51,15 @@ export default function CreateAssistantPage() {
 
   return (
     <div className="p-4 space-y-4 max-w-md mx-auto">
-      <button
-        className="bg-gray-200 text-gray-700 px-3 py-1 rounded"
-        onClick={() => navigate(-1)}
-      >
+      <Button className="bg-neutral2 text-text-primary" onClick={() => navigate(-1)}>
         Back
-      </button>
+      </Button>
       <h1 className="text-xl font-bold">Create Assistant</h1>
       <div className="space-y-2">
         <div className="space-y-1">
           <span>Name</span>
-          <input
-            className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
+          <Input
+            className="w-full focus:outline focus:outline-2 focus:outline-primary"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -70,7 +69,7 @@ export default function CreateAssistantPage() {
         <div className="space-y-1">
           <span>Description</span>
           <textarea
-            className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
+            className="border border-neutral3 p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-primary"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Description"
@@ -79,7 +78,7 @@ export default function CreateAssistantPage() {
         <div className="space-y-1">
           <span>Instructions</span>
           <textarea
-            className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
+            className="border border-neutral3 p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-primary"
             value={instructions}
             onChange={(e) => setInstructions(e.target.value)}
             placeholder="Instructions"
@@ -88,7 +87,7 @@ export default function CreateAssistantPage() {
         <div className="space-y-1">
           <span>Model</span>
           <select
-            className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
+            className="border border-neutral3 p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-primary"
             value={model}
             onChange={(e) => setModel(e.target.value)}
           >
@@ -101,7 +100,7 @@ export default function CreateAssistantPage() {
           </select>
         </div>
         <div className="flex items-center space-x-2">
-          <input
+          <Input
             type="checkbox"
             checked={fileSearch}
             onChange={(e) => setFileSearch(e.target.checked)}
@@ -113,8 +112,8 @@ export default function CreateAssistantPage() {
           <div key={f.id} className="flex items-center space-x-2">
             <div className="flex-1 space-y-1">
               <span>File</span>
-              <input
-                className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
+              <Input
+                className="w-full focus:outline focus:outline-2 focus:outline-primary"
                 type="file"
                 onChange={(e) =>
                   setFiles((cur) =>
@@ -127,22 +126,22 @@ export default function CreateAssistantPage() {
                 }
               />
             </div>
-            <button
+            <Button
               type="button"
-              className="text-red-600 text-xl leading-none px-2 focus:outline focus:outline-2 focus:outline-accent"
+              className="text-red-600 text-xl leading-none px-2 focus:outline focus:outline-2 focus:outline-primary bg-transparent"
               onClick={() =>
                 setFiles((cur) => cur.filter((obj) => obj.id !== f.id))
               }
             >
               &times;
-            </button>
+            </Button>
             Remove
           </div>
         ))}
         {files.length < 20 && (
-          <button
+          <Button
             type="button"
-            className="bg-gray-200 text-gray-700 px-2 py-1 rounded"
+            className="bg-neutral2 text-text-primary px-2 py-1"
             onClick={() =>
               setFiles((cur) => [
                 ...cur,
@@ -151,10 +150,10 @@ export default function CreateAssistantPage() {
             }
           >
             Add File
-          </button>
+          </Button>
         )}
-        <button
-          className={`px-4 py-2 rounded-lg text-white ${creating ? 'bg-grey60' : 'bg-accent'} disabled:cursor-not-allowed`}
+        <Button
+          className={`px-4 py-2 rounded-lg ${creating ? 'bg-neutral5' : 'bg-primary'} disabled:cursor-not-allowed`}
           disabled={creating}
           onClick={createAssistant}
         >
@@ -167,7 +166,7 @@ export default function CreateAssistantPage() {
           ) : (
             'Create'
           )}
-        </button>
+        </Button>
         {status && <p>{status}</p>}
       </div>
     </div>
