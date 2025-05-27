@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import api from '../api/axios';
 import type { Assistant } from './HomePage';
 import { useAssistant, NotAllowedError } from '../hooks/useAssistant';
 import Markdown from '../components/Markdown';
+import ShareAssistantModal from '../components/ShareAssistantModal';
 
 interface Message {
   id: string;
@@ -14,11 +15,13 @@ interface Message {
 export default function ChatPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { data: assistant, error } = useAssistant(id || '');
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [status, setStatus] = useState<string | null>(null);
   const [waiting, setWaiting] = useState(false);
+  const [showShare, setShowShare] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -28,6 +31,13 @@ export default function ChatPage() {
       navigate('/assistants');
     }
   }, [error, navigate]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('share')) {
+      setShowShare(true);
+    }
+  }, [location.search]);
 
   const fetchMessages = async () => {
     try {
@@ -105,6 +115,14 @@ export default function ChatPage() {
         >
           Files
         </button>
+        {assistant?.owner && (
+          <button
+            className="bg-gray-200 text-gray-700 px-3 py-1 rounded"
+            onClick={() => setShowShare(true)}
+          >
+            Share
+          </button>
+        )}
         <button
           className="bg-red-500 text-white px-3 py-1 rounded disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={waiting}
@@ -177,6 +195,12 @@ export default function ChatPage() {
         </button>
       </div>
       {status && <p>{status}</p>}
+      <ShareAssistantModal
+        id={id || ''}
+        open={showShare}
+        onClose={() => setShowShare(false)}
+        owner={!!assistant?.owner}
+      />
     </div>
   );
 }
