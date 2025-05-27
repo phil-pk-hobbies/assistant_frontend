@@ -1,4 +1,4 @@
-# React + TypeScript + Vite [Design System](docs/design-system.md)
+# React + TypeScript + Vite [Design System](docs/design-system.md) [Icons](docs/icons.md)
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
