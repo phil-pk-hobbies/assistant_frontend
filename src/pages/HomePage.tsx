@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import api from '../api/axios';
+import { useAssistants } from '../hooks/useAssistants';
+import AssistantCard from '../components/AssistantCard';
 
 export interface Assistant {
   id: string;
@@ -16,12 +19,13 @@ interface Message {
 }
 
 export default function HomePage() {
-  const [assistants, setAssistants] = useState<Assistant[]>([]);
+  const { data: assistants, isLoading } = useAssistants();
   const [status, setStatus] = useState<string | null>(null);
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [messagesByAssistant, setMessagesByAssistant] = useState<Record<string, Message[]>>({});
   const navigate = useNavigate();
+  const qc = useQueryClient();
 
   const deleteAssistant = async (id: string) => {
     if (!confirm('Delete this assistant?')) {
@@ -29,16 +33,7 @@ export default function HomePage() {
     }
     try {
       await api.delete(`/api/assistants/${id}/`);
-      setAssistants((list) => list.filter((a) => a.id !== id));
-    } catch (err: any) {
-      setStatus(`Error: ${err.message}`);
-    }
-  };
-
-  const fetchAssistants = async () => {
-    try {
-      const res = await api.get('/api/assistants/');
-      setAssistants(res.data);
+      qc.invalidateQueries({ queryKey: ['assistants'] });
     } catch (err: any) {
       setStatus(`Error: ${err.message}`);
     }
@@ -56,9 +51,6 @@ export default function HomePage() {
     }
   };
 
-  useEffect(() => {
-    void fetchAssistants();
-  }, []);
 
   useEffect(() => {
     if (search.trim() !== '') {
@@ -69,7 +61,8 @@ export default function HomePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, assistants]);
 
-  const visible = assistants.filter((a) => {
+  const list = assistants ?? [];
+  const visible = list.filter((a) => {
     if (filter !== 'all' && a.model !== filter) {
       return false;
     }
@@ -110,43 +103,18 @@ export default function HomePage() {
         aria-label="Search"
       />
       <div className="grid gap-4">
-        {visible.map((assistant) => (
-          <div
-            key={assistant.id}
-            className="border p-4 rounded-lg cursor-pointer hover:bg-gray-50 flex items-start"
-            onClick={() => navigate(`/assistants/${assistant.id}`)}
-          >
-            <div className="flex-grow">
-              <h2 className="text-lg font-semibold">{assistant.name}</h2>
-              <p className="text-sm text-gray-700 whitespace-pre-line">
-                {assistant.description}
-              </p>
-              <p className="text-sm text-gray-500">Model: {assistant.model}</p>
-            </div>
-            <button
-              aria-label="Edit"
-              title="Edit"
-              className="ml-4 text-gray-700 px-2 py-1 rounded focus:outline focus:outline-2 focus:outline-accent"
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(`/assistants/${assistant.id}/edit`);
-              }}
-            >
-              ✏️
-            </button>
-            <button
-              aria-label="Delete"
-              title="Delete"
-              className="ml-2 text-red-600 px-2 py-1 rounded focus:outline focus:outline-2 focus:outline-accent"
-              onClick={(e) => {
-                e.stopPropagation();
-                void deleteAssistant(assistant.id);
-              }}
-            >
-              🗑
-            </button>
+        {isLoading && (
+          <div className="animate-pulse space-y-2">
+            <div className="h-20 bg-gray-200 rounded" />
+            <div className="h-20 bg-gray-200 rounded" />
           </div>
+        )}
+        {!isLoading && visible.map((assistant) => (
+          <AssistantCard key={assistant.id} assistant={assistant as any} onDelete={deleteAssistant} />
         ))}
+        {!isLoading && visible.length === 0 && (
+          <div className="text-center text-gray-500">No assistants yet – create or request access</div>
+        )}
       </div>
       <button
         className="bg-accent text-white px-4 py-2 rounded-full fixed bottom-6 right-6 focus:outline focus:outline-2 focus:outline-accent"

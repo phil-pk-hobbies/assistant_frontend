@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import type { Assistant } from './HomePage';
+import { useAssistant, NotAllowedError } from '../hooks/useAssistant';
 import Markdown from '../components/Markdown';
 
 interface Message {
@@ -13,7 +14,7 @@ interface Message {
 export default function ChatPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [assistant, setAssistant] = useState<Assistant | null>(null);
+  const { data: assistant, error } = useAssistant(id || '');
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [status, setStatus] = useState<string | null>(null);
@@ -21,14 +22,12 @@ export default function ChatPage() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
-  const fetchAssistant = async () => {
-    try {
-      const { data } = await api.get(`/api/assistants/${id}/`);
-      setAssistant(data);
-    } catch {
-      // ignore errors
+  useEffect(() => {
+    if (error instanceof NotAllowedError) {
+      alert('Assistant not available');
+      navigate('/assistants');
     }
-  };
+  }, [error, navigate]);
 
   const fetchMessages = async () => {
     try {
@@ -43,7 +42,6 @@ export default function ChatPage() {
   };
 
   useEffect(() => {
-    void fetchAssistant();
     void fetchMessages();
   }, [id]);
 
