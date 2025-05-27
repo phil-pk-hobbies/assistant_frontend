@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import PermissionBadge from './PermissionBadge';
-import Button from './Button';
+import Button from './ui/Button';
 import type { Assistant } from '../pages/HomePage';
 
 interface Props {
