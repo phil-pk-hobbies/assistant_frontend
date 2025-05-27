@@ -15,6 +15,8 @@ export default function EditAssistantPage() {
   const [existingFiles, setExistingFiles] = useState<{ id: string; name: string }[]>([]);
   const [newFiles, setNewFiles] = useState<File[]>([]);
   const [removeFiles, setRemoveFiles] = useState<Set<string>>(new Set());
+  const [vectorFiles, setVectorFiles] = useState<{ id: string; filename: string }[]>([]);
+  const [vectorStatus, setVectorStatus] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const fetchAssistant = async () => {
@@ -46,6 +48,26 @@ export default function EditAssistantPage() {
 
   useEffect(() => {
     void fetchAssistant();
+    const fetchVectorFiles = async () => {
+      if (!id) return;
+      try {
+        const res = await fetch(`/api/assistants/${id}/vector-store/files/`);
+        if (res.ok) {
+          const data = await res.json();
+          setVectorFiles(data);
+        } else if (res.status === 404) {
+          const msg = await res.text();
+          setVectorStatus(msg || 'No vector store for this assistant.');
+        } else {
+          const msg = await res.text();
+          throw new Error(msg || res.statusText);
+        }
+      } catch (err: any) {
+        setVectorStatus(`Error: ${err.message}`);
+      }
+    };
+
+    void fetchVectorFiles();
   }, [id]);
 
   const updateAssistant = async () => {
@@ -134,6 +156,17 @@ export default function EditAssistantPage() {
           />
           <span>Enable file search</span>
         </label>
+        {vectorStatus && <p>{vectorStatus}</p>}
+        {vectorFiles.length > 0 && (
+          <div className="space-y-1">
+            <p className="font-semibold">Vector store files</p>
+            <ul className="list-disc list-inside space-y-1">
+              {vectorFiles.map((vf) => (
+                <li key={vf.id}>{vf.filename}</li>
+              ))}
+            </ul>
+          </div>
+        )}
         {existingFiles.length > 0 && (
           <div className="space-y-1">
             <p className="font-semibold">Remove files</p>
