@@ -15,6 +15,9 @@ export default function ProtectedRoute() {
       <header className="p-2 border-b flex justify-between items-center">
         <span className="text-sm text-gray-700">Logged in as {user.username}</span>
         <div className="flex gap-4 items-center">
+          <Link className="text-accentBlue underline" to="/assistants">
+            Home
+          </Link>
           {user.is_staff && (
             <Link className="text-accentBlue underline" to="/admin/users">
               Users
