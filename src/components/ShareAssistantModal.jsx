@@ -1,0 +1,193 @@
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { useQueryClient } from '@tanstack/react-query';
+import {
+  useAssistantUserShares,
+  useAssistantDeptShares,
+  addUserShare,
+  addDeptShare,
+  removeUserShare,
+  removeDeptShare,
+} from '../hooks/useAssistantShares';
+import { useUsersSearch } from '../hooks/useUsersSearch';
+import { useDepartments } from '../hooks/useDepartments';
+
+export default function ShareAssistantModal({ id, open, onClose, owner }) {
+  const { data: userShares = [] } = useAssistantUserShares(id, { enabled: open && owner });
+  const { data: deptShares = [] } = useAssistantDeptShares(id, { enabled: open && owner });
+  const [tab, setTab] = useState('users');
+  const [search, setSearch] = useState('');
+  const { data: users = [] } = useUsersSearch(search);
+  const { data: departments = [] } = useDepartments();
+  const [perm, setPerm] = useState('use');
+  const [selUser, setSelUser] = useState('');
+  const [selDept, setSelDept] = useState('');
+  const [status, setStatus] = useState(null);
+  const qc = useQueryClient();
+
+  useEffect(() => {
+    if (!open) {
+      setSearch('');
+      setSelUser('');
+      setSelDept('');
+      setPerm('use');
+      setStatus(null);
+    }
+  }, [open]);
+
+  if (!open || !owner) return null;
+
+  const addUser = async () => {
+    if (!selUser) return;
+    try {
+      await addUserShare(id, { user: selUser, permission: perm });
+      qc.invalidateQueries(['assistant', 'shares', id, 'users']);
+      qc.invalidateQueries(['assistants']);
+      setSelUser('');
+      setStatus('Access granted');
+    } catch (err) {
+      setStatus(err.response?.data || 'Error');
+    }
+  };
+
+  const addDept = async () => {
+    if (!selDept) return;
+    try {
+      await addDeptShare(id, { department: selDept, permission: perm });
+      qc.invalidateQueries(['assistant', 'shares', id, 'depts']);
+      qc.invalidateQueries(['assistants']);
+      setSelDept('');
+      setStatus('Access granted');
+    } catch (err) {
+      setStatus(err.response?.data || 'Error');
+    }
+  };
+
+  const changeUserPerm = async (uid, p) => {
+    try {
+      await addUserShare(id, { user: uid, permission: p });
+      qc.invalidateQueries(['assistant', 'shares', id, 'users']);
+      qc.invalidateQueries(['assistants']);
+    } catch (err) {
+      setStatus(err.response?.data || 'Error');
+    }
+  };
+
+  const changeDeptPerm = async (did, p) => {
+    try {
+      await addDeptShare(id, { department: did, permission: p });
+      qc.invalidateQueries(['assistant', 'shares', id, 'depts']);
+      qc.invalidateQueries(['assistants']);
+    } catch (err) {
+      setStatus(err.response?.data || 'Error');
+    }
+  };
+
+  const removeUser = async (uid) => {
+    if (!confirm('Remove user?')) return;
+    try {
+      await removeUserShare(id, uid);
+      qc.invalidateQueries(['assistant', 'shares', id, 'users']);
+      qc.invalidateQueries(['assistants']);
+    } catch (err) {
+      setStatus(err.response?.data || 'Error');
+    }
+  };
+
+  const removeDept = async (did) => {
+    if (!confirm('Remove department?')) return;
+    try {
+      await removeDeptShare(id, did);
+      qc.invalidateQueries(['assistant', 'shares', id, 'depts']);
+      qc.invalidateQueries(['assistants']);
+    } catch (err) {
+      setStatus(err.response?.data || 'Error');
+    }
+  };
+
+  const body = (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white p-4 rounded max-h-[90vh] overflow-y-auto w-full max-w-lg">
+        <h2 className="text-lg font-bold mb-2">Share Assistant</h2>
+        <div className="flex gap-2 mb-4">
+          <button className={`px-2 py-1 rounded ${tab==='users'?'bg-accent text-white':'bg-gray-200'}`} onClick={()=>setTab('users')}>Users</button>
+          <button className={`px-2 py-1 rounded ${tab==='depts'?'bg-accent text-white':'bg-gray-200'}`} onClick={()=>setTab('depts')}>Departments</button>
+          <button className="ml-auto" onClick={onClose}>✖️</button>
+        </div>
+        {tab==='users' && (
+          <div className="space-y-2">
+            <table className="w-full text-sm">
+              <tbody>
+                {userShares.map((u)=> (
+                  <tr key={u.id} className="border-b">
+                    <td className="py-1">{u.name}</td>
+                    <td>
+                      <select value={u.permission} onChange={e=>changeUserPerm(u.id,e.target.value)} className="border p-1 text-sm">
+                        <option value="use">Use</option>
+                        <option value="edit">Edit</option>
+                      </select>
+                    </td>
+                    <td>
+                      <button aria-label={`remove ${u.name}`} onClick={()=>removeUser(u.id)}>🗑</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="flex gap-2 items-center mt-2">
+              <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search users" className="border p-1 flex-grow" />
+              <select value={selUser} onChange={e=>setSelUser(e.target.value)} className="border p-1">
+                <option value="">Select</option>
+                {users.filter(u=>!userShares.some(s=>s.id===u.id)).map(u=> (
+                  <option key={u.id} value={u.id}>{u.name}</option>
+                ))}
+              </select>
+              <select value={perm} onChange={e=>setPerm(e.target.value)} className="border p-1">
+                <option value="use">Use</option>
+                <option value="edit">Edit</option>
+              </select>
+              <button onClick={addUser} className="bg-accent text-white px-2 py-1 rounded">Add</button>
+            </div>
+          </div>
+        )}
+        {tab==='depts' && (
+          <div className="space-y-2">
+            <table className="w-full text-sm">
+              <tbody>
+                {deptShares.map((d)=> (
+                  <tr key={d.id} className="border-b">
+                    <td className="py-1">{d.name}</td>
+                    <td>
+                      <select value={d.permission} onChange={e=>changeDeptPerm(d.id,e.target.value)} className="border p-1 text-sm">
+                        <option value="use">Use</option>
+                        <option value="edit">Edit</option>
+                      </select>
+                    </td>
+                    <td>
+                      <button aria-label={`remove ${d.name}`} onClick={()=>removeDept(d.id)}>🗑</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="flex gap-2 items-center mt-2">
+              <select value={selDept} onChange={e=>setSelDept(e.target.value)} className="border p-1 flex-grow">
+                <option value="">Select department</option>
+                {departments.filter(dep=>!deptShares.some(s=>s.id===dep.id)).map(dep=>(
+                  <option key={dep.id} value={dep.id}>{dep.name}</option>
+                ))}
+              </select>
+              <select value={perm} onChange={e=>setPerm(e.target.value)} className="border p-1">
+                <option value="use">Use</option>
+                <option value="edit">Edit</option>
+              </select>
+              <button onClick={addDept} className="bg-accent text-white px-2 py-1 rounded">Add</button>
+            </div>
+          </div>
+        )}
+        {status && <p className="mt-2 text-sm text-gray-700">{status}</p>}
+      </div>
+    </div>
+  );
+  return createPortal(body, document.body);
+}

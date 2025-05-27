@@ -94,4 +94,11 @@ Assistants you can access will show a colored badge indicating your level:
 * **Edit** – you may update settings and files.
 * **Use** – read-only access for chatting.
 
+## Sharing assistants
+
+Owners can share assistants with individual users or entire departments using the Share button on the chat page.
+Choose the permission level and press Add.
+
+![Share modal](docs/share-modal.png)
+
 
