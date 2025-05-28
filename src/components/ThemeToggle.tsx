@@ -8,7 +8,7 @@ export default function ThemeToggle() {
     <button
       aria-label="Toggle dark mode"
       onClick={toggleTheme}
-      className="fixed bottom-4 right-4 p-2 bg-surface border border-neutral4 rounded-full"
+      className="fixed top-4 right-4 p-2 bg-surface border border-neutral4 rounded-full"
     >
       <Icon name={theme === 'dark' ? 'Sun' : 'Moon'} />
     </button>
