@@ -86,6 +86,7 @@ export default function CreateAssistantPage() {
             value={instructions}
             onChange={(e) => setInstructions(e.target.value)}
             placeholder="Instructions"
+            autoResize
           />
         </div>
         <div className="space-y-1">
