@@ -22,6 +22,7 @@ export default {
                 neutral6: 'var(--color-neutral-6)',
                 neutral7: 'var(--color-neutral-7)',
                 neutral8: 'var(--color-neutral-8)',
+                "on-primary": 'var(--text-on-primary)',
             },
             spacing: {
                 1: 'var(--sp-1)',
