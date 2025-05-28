@@ -1,13 +1,16 @@
 import React from 'react';
-import * as Icons from 'lucide-react';
+import { Pencil, Trash2, X } from 'lucide-react';
 import classNames from 'classnames';
 
-export type LucideIconName = keyof typeof Icons;
+// Only import icons used in the application. Add new ones here as needed.
+const icons = { Pencil, Trash2, X };
+
+export type IconName = keyof typeof icons;
 
 const sizeMap = { sm: 16, md: 20, lg: 24 } as const;
 
 export interface IconProps extends React.SVGProps<SVGSVGElement> {
-  name: LucideIconName;
+  name: IconName;
   size?: keyof typeof sizeMap;
   colorToken?: string;
   className?: string;
@@ -20,7 +23,7 @@ export default function Icon({
   colorToken,
   ...rest
 }: IconProps) {
-  const Lucide = Icons[name] as React.FC<React.SVGProps<SVGSVGElement>>;
+  const Lucide = icons[name];
   return (
     <Lucide
       stroke="currentColor"

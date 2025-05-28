@@ -1,6 +1,7 @@
 # Icons
 
-This project uses [lucide-react](https://github.com/lucide-icons/lucide) for all UI icons. Import the `Icon` wrapper from `src/components/ui/Icon` and pass the icon name.
+This project uses [lucide-react](https://github.com/lucide-icons/lucide) for all UI icons. Only the icons actually used in the app are imported to keep the bundle small.
+Import the `Icon` wrapper from `src/components/ui/Icon` and pass the icon name.
 
 ```tsx
 import Icon from '../components/ui/Icon';
