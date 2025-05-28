@@ -154,6 +154,7 @@ export default function EditAssistantPage() {
         <div className="space-y-1">
           <span>Description</span>
           <textarea
+            rows={4}
             className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -164,6 +165,7 @@ export default function EditAssistantPage() {
         <div className="space-y-1">
           <span>Instructions</span>
           <textarea
+            rows={4}
             className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
             value={instructions}
             onChange={(e) => setInstructions(e.target.value)}
