@@ -1,66 +1,34 @@
-# React + TypeScript + Vite [Design System](docs/design-system.md) [Icons](docs/icons.md)
+# Assistant Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a React + TypeScript application built with Vite. It provides a UI for creating, sharing and chatting with assistants. The interface uses a small Tailwind based design system and [lucide-react](https://github.com/lucide-icons/lucide) icons. See [docs/design-system.md](docs/design-system.md) and [docs/icons.md](docs/icons.md) for details.
 
-Currently, two official plugins are available:
+## Getting started
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Copy `.env.example` to `.env` and set `VITE_API_BASE_URL` to the URL of your backend.
+3. Start the dev server:
+   ```bash
+   npm run dev
+   ```
+   The app runs on <http://localhost:5173> and all requests under `/api` are proxied to the backend configured in `vite.config.ts`.
 
-## Expanding the ESLint configuration
+### Useful scripts
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+- `npm run build` – build the production bundle
+- `npm run preview` – preview the production build
+- `npm run lint` – run ESLint and Stylelint
+- `npm test` – execute unit tests
 
 ## Managing Assistants
 
-Run `npm run dev` and open the app in your browser. The home page lists all existing assistants retrieved from `/api/assistants/`. Use the form on the page to enter a name and submit to create a new assistant.
+Run the development server and open the app in your browser. The home page lists all existing assistants retrieved from `/api/assistants/`. Use the form on the page to enter a name and submit to create a new assistant.
 
-To chat with an assistant the frontend now posts messages to `/api/assistants/<uuid>/chat/`. The backend returns the assistant's reply which is displayed in the chat window.
+To chat with an assistant the frontend posts messages to `/api/assistants/<uuid>/chat/`. The backend returns the assistant's reply which is displayed in the chat window.
 
-
-When creating a new assistant you can select a model from a dropdown menu. The list now includes a fixed set of options (`gpt-4`, `gpt-4o`, `o3-mini`) and the chosen model is sent along with the create request.
+When creating a new assistant you can select a model from a dropdown menu. The list includes a fixed set of options (`gpt-4`, `gpt-4o`, `o3-mini`) and the chosen model is sent along with the create request.
 
 File uploads are also supported during assistant creation. You may add files individually (up to 20 in total) and they will be uploaded using `multipart/form-data` when the request is sent to `/api/assistants/`.
 
@@ -96,9 +64,6 @@ Assistants you can access will show a colored badge indicating your level:
 
 ## Sharing assistants
 
-Owners can share assistants with individual users or entire departments using the Share button on the chat page.
-Choose the permission level and press Add.
+Owners can share assistants with individual users or entire departments using the Share button on the chat page. Choose the permission level and press Add.
 
 ![Share modal](docs/share-modal.png)
-
-
