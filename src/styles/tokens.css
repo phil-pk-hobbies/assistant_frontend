@@ -45,3 +45,18 @@
   --br-sm: 4px;
   --br-lg: 8px;
 }
+
+.dark {
+  --color-background: #1f2937;
+  --color-surface: #374151;
+  --color-neutral-1: #1f2937;
+  --color-neutral-2: #374151;
+  --color-neutral-3: #4b5563;
+  --color-neutral-4: #6b7280;
+  --color-neutral-5: #9ca3af;
+  --color-neutral-6: #d1d5db;
+  --color-neutral-7: #e5e7eb;
+  --color-neutral-8: #f3f4f6;
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
+}

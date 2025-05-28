@@ -1,9 +1,9 @@
 import React from 'react';
-import { Pencil, Trash2, X } from 'lucide-react';
+import { Pencil, Trash2, X, Sun, Moon } from 'lucide-react';
 import classNames from 'classnames';
 
 // Only import icons used in the application. Add new ones here as needed.
-const icons = { Pencil, Trash2, X };
+const icons = { Pencil, Trash2, X, Sun, Moon };
 
 export type IconName = keyof typeof icons;
 
