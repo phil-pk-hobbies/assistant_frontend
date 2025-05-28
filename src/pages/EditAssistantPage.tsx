@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../api/axios';
 import { useAssistant, NotAllowedError } from '../hooks/useAssistant';
+import TextArea from '../components/ui/TextArea';
 
 const MODEL_OPTIONS = ['gpt-4', 'gpt-4o', 'o3-mini'];
 
@@ -164,13 +165,14 @@ export default function EditAssistantPage() {
         </div>
         <div className="space-y-1">
           <span>Instructions</span>
-          <textarea
+          <TextArea
             rows={4}
-            className="border p-2 w-full rounded-lg focus:outline focus:outline-2 focus:outline-accent"
+            className="w-full"
             value={instructions}
             onChange={(e) => setInstructions(e.target.value)}
             placeholder="Instructions"
             disabled={readonly}
+            autoResize
           />
         </div>
         <div className="space-y-1">
