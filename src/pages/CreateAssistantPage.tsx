@@ -71,6 +71,7 @@ export default function CreateAssistantPage() {
         <div className="space-y-1">
           <span>Description</span>
           <TextArea
+            rows={4}
             className="w-full"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -80,6 +81,7 @@ export default function CreateAssistantPage() {
         <div className="space-y-1">
           <span>Instructions</span>
           <TextArea
+            rows={4}
             className="w-full"
             value={instructions}
             onChange={(e) => setInstructions(e.target.value)}
