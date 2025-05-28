@@ -32,7 +32,8 @@ export default function AssistantCard({ assistant, onDelete }: Props) {
             <Button
               aria-label="Edit"
               title="Edit"
-              className="bg-transparent text-neutral7 px-2 py-1"
+              variant="ghost"
+              className="text-neutral7 px-2 py-1"
               onClick={(e) => {
                 e.stopPropagation();
                 navigate(`/assistants/${assistant.id}/edit`);
@@ -43,7 +44,8 @@ export default function AssistantCard({ assistant, onDelete }: Props) {
             <Button
               aria-label="Delete"
               title="Delete"
-              className="bg-transparent text-danger px-2 py-1"
+              variant="ghost"
+              className="text-danger px-2 py-1"
               onClick={(e) => {
                 e.stopPropagation();
                 onDelete && onDelete(assistant.id);
