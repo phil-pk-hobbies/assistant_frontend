@@ -46,24 +46,6 @@ export default function EditAssistantPage() {
 
 
   useEffect(() => {
-    if (assistant) {
-      setName(assistant.name || '');
-      setDescription(assistant.description || '');
-      setInstructions(assistant.instructions || '');
-      setModel(assistant.model || '');
-      if (Array.isArray(assistant.tools)) {
-        setFileSearch(
-          assistant.tools.some((t: any) =>
-            typeof t === 'string'
-              ? t === 'file_search'
-              : t && t.type === 'file_search',
-          ),
-        );
-      }
-      if (Array.isArray(assistant.files)) {
-        setExistingFiles(assistant.files);
-      }
-    }
     const fetchVectorFiles = async () => {
       if (!id) return;
       try {
@@ -84,14 +66,39 @@ export default function EditAssistantPage() {
           setVectorFiles(items);
       } catch (err: any) {
         if (err.response?.status === 404) {
+          setVectorFiles([]);
           setVectorStatus(err.response.data || 'No vector store for this assistant.');
         } else {
           setVectorStatus(`Error: ${err.message}`);
         }
       }
     };
+    if (assistant) {
+      setName(assistant.name || '');
+      setDescription(assistant.description || '');
+      setInstructions(assistant.instructions || '');
+      setModel(assistant.model || '');
 
-    void fetchVectorFiles();
+      const hasFileSearch = Array.isArray(assistant.tools)
+        ? assistant.tools.some((t: any) =>
+            typeof t === 'string'
+              ? t === 'file_search'
+              : t && t.type === 'file_search',
+          )
+        : false;
+      setFileSearch(hasFileSearch);
+
+      if (Array.isArray(assistant.files)) {
+        setExistingFiles(assistant.files);
+      }
+
+      if (hasFileSearch) {
+        void fetchVectorFiles();
+      } else {
+        setVectorFiles([]);
+        setVectorStatus('No vector store for this assistant.');
+      }
+    }
   }, [assistant, id]);
 
   const updateAssistant = async () => {
