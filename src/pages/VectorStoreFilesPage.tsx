@@ -36,6 +36,7 @@ export default function VectorStoreFilesPage() {
         setFiles(items);
       } catch (err: any) {
         if (err.response?.status === 404) {
+          setFiles([]);
           setStatus(err.response.data || 'No vector store for this assistant.');
         } else {
           setStatus(`Error: ${err.message}`);
