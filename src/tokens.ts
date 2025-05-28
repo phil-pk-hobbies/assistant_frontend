@@ -14,6 +14,7 @@ export const TOKENS = {
   'color-success': 'var(--color-success)',
   'color-warning': 'var(--color-warning)',
   'color-danger': 'var(--color-danger)',
+  'color-accent': 'var(--color-accent)',
   'text-primary': 'var(--text-primary)',
   'text-secondary': 'var(--text-secondary)',
   'text-on-primary': 'var(--text-on-primary)',

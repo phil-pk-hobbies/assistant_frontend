@@ -14,6 +14,7 @@ export default {
                 success: 'var(--color-success)',
                 warning: 'var(--color-warning)',
                 danger: 'var(--color-danger)',
+                accent: 'var(--color-accent)',
                 neutral1: 'var(--color-neutral-1)',
                 neutral2: 'var(--color-neutral-2)',
                 neutral3: 'var(--color-neutral-3)',
